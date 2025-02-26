@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Send, ArrowLeft, RefreshCw } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ChatRoomProps {
   userRole: Role;
@@ -16,23 +17,33 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch }: ChatRoomProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     // Create WebSocket connection
-    const ws = new WebSocket("wss://your-websocket-server"); // You'll need to replace this with your actual WebSocket server URL
+    const ws = new WebSocket("ws://localhost:8080");
     
     ws.onopen = () => {
       console.log("WebSocket Connected");
       setWsConnection(ws);
+      toast({
+        title: "Connected to chat",
+        description: "You can now start sending messages",
+      });
     };
 
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      setMessages(prev => [...prev, message]);
+      setMessages(prev => [...prev, { ...message, senderId: "other" }]);
     };
 
     ws.onclose = () => {
       console.log("WebSocket Disconnected");
+      toast({
+        title: "Disconnected from chat",
+        description: "Please refresh to reconnect",
+        variant: "destructive",
+      });
     };
 
     return () => {
