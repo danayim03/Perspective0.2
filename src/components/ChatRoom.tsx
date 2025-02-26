@@ -33,8 +33,23 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch }: ChatRoomProps) => {
     };
 
     ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      setMessages(prev => [...prev, { ...message, senderId: "other" }]);
+      const data = JSON.parse(event.data);
+      if (data.type === 'chat') {
+        const newMessage: Message = {
+          id: Date.now().toString(),
+          senderId: "other",
+          content: data.message,
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, newMessage]);
+      } else if (data.type === 'matchEnded') {
+        toast({
+          title: "Chat ended",
+          description: "Your match has disconnected",
+          variant: "destructive",
+        });
+        onGoBack();
+      }
     };
 
     ws.onclose = () => {
@@ -63,7 +78,11 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch }: ChatRoomProps) => {
       timestamp: new Date(),
     };
 
-    wsConnection.send(JSON.stringify(message));
+    wsConnection.send(JSON.stringify({
+      type: 'chat',
+      message: newMessage
+    }));
+
     setMessages(prev => [...prev, message]);
     setNewMessage("");
   };
