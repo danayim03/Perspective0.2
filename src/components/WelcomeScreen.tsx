@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Gender, Orientation, User } from "@/types";
+import { Gender, Orientation, Role, User } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -16,12 +16,23 @@ interface WelcomeScreenProps {
 }
 
 export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
+  const [role, setRole] = useState<Role | "">("");
   const [gender, setGender] = useState<Gender | "">("");
   const [orientation, setOrientation] = useState<Orientation | "">("");
+  const [targetGender, setTargetGender] = useState<Gender | "">("");
+  const [targetOrientation, setTargetOrientation] = useState<Orientation | "">("");
 
   const handleSubmit = () => {
-    if (gender && orientation) {
-      onComplete({ gender, orientation });
+    if (role && gender && orientation) {
+      onComplete({
+        role,
+        gender,
+        orientation,
+        ...(role === "getter" && {
+          targetGender,
+          targetOrientation,
+        }),
+      });
     }
   };
 
@@ -31,17 +42,36 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         <div className="space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-semibold text-gray-900">Perspective</h1>
-            <p className="text-gray-600">Find your perfect match</p>
+            <p className="text-gray-600">Share your perspective or get advice</p>
           </div>
 
           <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                I want to...
+              </label>
+              <Select onValueChange={(value) => setRole(value as Role)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Choose your role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="getter">
+                    💡 Get perspective about my situation
+                  </SelectItem>
+                  <SelectItem value="giver">
+                    🍵 Give perspective to others
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">
                 I identify as
               </label>
               <Select onValueChange={(value) => setGender(value as Gender)}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select gender" />
+                  <SelectValue placeholder="Select your gender" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="male">Male</SelectItem>
@@ -53,13 +83,13 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">
-                I am interested in
+                My orientation is
               </label>
               <Select
                 onValueChange={(value) => setOrientation(value as Orientation)}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select orientation" />
+                  <SelectValue placeholder="Select your orientation" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="straight">Straight</SelectItem>
@@ -70,12 +100,60 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               </Select>
             </div>
 
+            {role === "getter" && (
+              <>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    My crush identifies as
+                  </label>
+                  <Select
+                    onValueChange={(value) => setTargetGender(value as Gender)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select their gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="non-binary">Non-binary</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Their orientation is
+                  </label>
+                  <Select
+                    onValueChange={(value) =>
+                      setTargetOrientation(value as Orientation)
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select their orientation" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="straight">Straight</SelectItem>
+                      <SelectItem value="gay">Gay</SelectItem>
+                      <SelectItem value="lesbian">Lesbian</SelectItem>
+                      <SelectItem value="bisexual">Bisexual</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
+
             <Button
               onClick={handleSubmit}
-              disabled={!gender || !orientation}
+              disabled={
+                !role ||
+                !gender ||
+                !orientation ||
+                (role === "getter" && (!targetGender || !targetOrientation))
+              }
               className="w-full bg-perspective-500 hover:bg-perspective-600 text-white transition-all duration-300"
             >
-              Find My Match
+              {role === "getter" ? "Get Perspective" : "Give Perspective"}
             </Button>
           </div>
         </div>

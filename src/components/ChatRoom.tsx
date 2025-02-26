@@ -1,12 +1,16 @@
 
 import { useState } from "react";
-import { Message } from "@/types";
+import { Message, Role } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Send } from "lucide-react";
 
-export const ChatRoom = () => {
+interface ChatRoomProps {
+  userRole: Role;
+}
+
+export const ChatRoom = ({ userRole }: ChatRoomProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
 
@@ -24,11 +28,19 @@ export const ChatRoom = () => {
     setNewMessage("");
   };
 
+  const roleTitle = userRole === "getter" 
+    ? "Getting Perspective" 
+    : "Giving Perspective";
+
+  const placeholderText = userRole === "getter"
+    ? "Ask about your situation..."
+    : "Share your perspective...";
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-perspective-100 to-perspective-200 p-4">
       <Card className="flex-1 flex flex-col max-w-2xl w-full mx-auto backdrop-blur-lg bg-white/90 rounded-2xl shadow-xl">
         <div className="p-4 border-b">
-          <h2 className="text-xl font-semibold text-gray-900">Chat Room</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{roleTitle}</h2>
         </div>
 
         <div className="flex-1 p-4 overflow-y-auto space-y-4">
@@ -57,7 +69,7 @@ export const ChatRoom = () => {
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
+              placeholder={placeholderText}
               onKeyPress={(e) => e.key === "Enter" && handleSend()}
               className="flex-1"
             />

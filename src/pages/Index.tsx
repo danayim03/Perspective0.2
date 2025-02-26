@@ -23,8 +23,13 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {state === "welcome" && <WelcomeScreen onComplete={handleWelcomeComplete} />}
-      {state === "matching" && <MatchingScreen onMatch={handleMatch} />}
-      {state === "chat" && <ChatRoom />}
+      {state === "matching" && (
+        <MatchingScreen
+          onMatch={handleMatch}
+          role={user?.role || "getter"}
+        />
+      )}
+      {state === "chat" && <ChatRoom userRole={user?.role || "getter"} />}
     </div>
   );
 };
