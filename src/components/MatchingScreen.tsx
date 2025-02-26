@@ -1,21 +1,58 @@
 
-import { useEffect } from "react";
-import { Role } from "@/types";
+import { useEffect, useState } from "react";
+import { Role, User } from "@/types";
+import { useToast } from "@/components/ui/use-toast";
 
 interface MatchingScreenProps {
   onMatch: () => void;
   role: Role;
+  user: User;
 }
 
-export const MatchingScreen = ({ onMatch, role }: MatchingScreenProps) => {
-  useEffect(() => {
-    // Simulate finding a match after 3 seconds
-    const timer = setTimeout(() => {
-      onMatch();
-    }, 3000);
+export const MatchingScreen = ({ onMatch, role, user }: MatchingScreenProps) => {
+  const [ws, setWs] = useState<WebSocket | null>(null);
+  const { toast } = useToast();
 
-    return () => clearTimeout(timer);
-  }, [onMatch]);
+  useEffect(() => {
+    const websocket = new WebSocket("ws://localhost:8080");
+    
+    websocket.onopen = () => {
+      console.log("WebSocket Connected");
+      // Send user data to server for matching
+      websocket.send(JSON.stringify({
+        type: 'waiting',
+        user: user
+      }));
+    };
+
+    websocket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'matched') {
+        toast({
+          title: "Match found!",
+          description: "Connecting you to chat...",
+        });
+        onMatch();
+      }
+    };
+
+    websocket.onclose = () => {
+      console.log("WebSocket Disconnected");
+      toast({
+        title: "Connection lost",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    };
+
+    setWs(websocket);
+
+    return () => {
+      if (websocket) {
+        websocket.close();
+      }
+    };
+  }, [onMatch, user]);
 
   const messages = {
     getter: {
