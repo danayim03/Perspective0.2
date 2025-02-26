@@ -11,12 +11,13 @@ interface ChatRoomProps {
   userRole: Role;
   onGoBack: () => void;
   onRematch: () => void;
-  ws?: WebSocket;
+  ws: WebSocket | null;
 }
 
 export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [isConnected, setIsConnected] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -29,50 +30,93 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       return;
     }
 
+    // Set up connection status
+    if (ws.readyState === WebSocket.OPEN) {
+      setIsConnected(true);
+    }
+
+    ws.onopen = () => {
+      console.log("WebSocket connection opened");
+      setIsConnected(true);
+    };
+
     const messageHandler = (event: MessageEvent) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'chat') {
-        const newMessage: Message = {
-          id: Date.now().toString(),
-          senderId: "other",
-          content: data.message,
-          timestamp: new Date(),
-        };
-        setMessages(prev => [...prev, newMessage]);
-      } else if (data.type === 'matchEnded') {
-        toast({
-          title: "Chat ended",
-          description: "Your match has disconnected",
-          variant: "destructive",
-        });
-        onGoBack();
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'chat') {
+          const newMessage: Message = {
+            id: Date.now().toString(),
+            senderId: "other",
+            content: data.message,
+            timestamp: new Date(),
+          };
+          setMessages(prev => [...prev, newMessage]);
+        } else if (data.type === 'matchEnded') {
+          toast({
+            title: "Chat ended",
+            description: "Your match has disconnected",
+            variant: "destructive",
+          });
+          onGoBack();
+        }
+      } catch (error) {
+        console.error("Error processing message:", error);
       }
     };
 
     ws.addEventListener('message', messageHandler);
 
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+      setIsConnected(false);
+      toast({
+        title: "Connection lost",
+        description: "The chat connection was closed",
+        variant: "destructive",
+      });
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+      setIsConnected(false);
+      toast({
+        title: "Connection error",
+        description: "There was an error with the chat connection",
+        variant: "destructive",
+      });
+    };
+
     return () => {
       ws.removeEventListener('message', messageHandler);
     };
-  }, [ws, onGoBack]);
+  }, [ws, onGoBack, toast]);
 
   const handleSend = () => {
-    if (!newMessage.trim() || !ws) return;
+    if (!newMessage.trim() || !ws || !isConnected) return;
 
-    const message: Message = {
-      id: Date.now().toString(),
-      senderId: "user1",
-      content: newMessage,
-      timestamp: new Date(),
-    };
+    try {
+      const message: Message = {
+        id: Date.now().toString(),
+        senderId: "user1",
+        content: newMessage,
+        timestamp: new Date(),
+      };
 
-    ws.send(JSON.stringify({
-      type: 'chat',
-      message: newMessage
-    }));
+      ws.send(JSON.stringify({
+        type: 'chat',
+        message: newMessage
+      }));
 
-    setMessages(prev => [...prev, message]);
-    setNewMessage("");
+      setMessages(prev => [...prev, message]);
+      setNewMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send message",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -98,7 +142,12 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
         </div>
 
         <div className="flex-1 p-4 overflow-y-auto space-y-4">
-          {messages.length === 0 ? (
+          {!isConnected && (
+            <div className="h-full flex items-center justify-center text-red-500">
+              Connection lost. Please try again.
+            </div>
+          )}
+          {isConnected && messages.length === 0 ? (
             <div className="h-full flex items-center justify-center text-gray-500">
               No messages yet. Start the conversation!
             </div>
@@ -129,13 +178,14 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type a message..."
+              placeholder={isConnected ? "Type a message..." : "Connecting..."}
               onKeyPress={(e) => e.key === "Enter" && handleSend()}
               className="flex-1 bg-white/50"
+              disabled={!isConnected}
             />
             <Button
               onClick={handleSend}
-              disabled={!newMessage.trim()}
+              disabled={!newMessage.trim() || !isConnected}
               className="bg-perspective-400 hover:bg-perspective-500 text-white"
             >
               <Send className="w-4 h-4" />
