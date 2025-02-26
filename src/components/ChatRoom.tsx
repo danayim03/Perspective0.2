@@ -18,6 +18,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [isConnected, setIsConnected] = useState(false);
+  const [isNormalChatEnd, setIsNormalChatEnd] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -52,7 +53,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           };
           setMessages(prev => [...prev, newMessage]);
         } else if (data.type === 'matchEnded') {
-          // Add system message about chat ending
+          setIsNormalChatEnd(true);
           const systemMessage: Message = {
             id: Date.now().toString(),
             senderId: "system",
@@ -77,27 +78,32 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     ws.onclose = () => {
       console.log("WebSocket connection closed");
       setIsConnected(false);
-      toast({
-        title: "Connection lost",
-        description: "The chat connection was closed",
-        variant: "destructive",
-      });
+      // Only show connection lost message if it wasn't a normal chat ending
+      if (!isNormalChatEnd) {
+        toast({
+          title: "Connection lost",
+          description: "The chat connection was closed",
+          variant: "destructive",
+        });
+      }
     };
 
     ws.onerror = (error) => {
       console.error("WebSocket error:", error);
       setIsConnected(false);
-      toast({
-        title: "Connection error",
-        description: "There was an error with the chat connection",
-        variant: "destructive",
-      });
+      if (!isNormalChatEnd) {
+        toast({
+          title: "Connection error",
+          description: "There was an error with the chat connection",
+          variant: "destructive",
+        });
+      }
     };
 
     return () => {
       ws.removeEventListener('message', messageHandler);
     };
-  }, [ws, onGoBack, toast]);
+  }, [ws, onGoBack, toast, isNormalChatEnd]);
 
   const handleSend = () => {
     if (!newMessage.trim() || !ws || !isConnected) return;
@@ -129,6 +135,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
 
   const handleEndChat = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
+      setIsNormalChatEnd(true);
       ws.send(JSON.stringify({ type: 'endChat' }));
       const systemMessage: Message = {
         id: Date.now().toString(),
@@ -143,6 +150,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
 
   const handleRematchClick = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
+      setIsNormalChatEnd(true);
       ws.send(JSON.stringify({ type: 'endChat' }));
       onRematch(); // This will trigger the rematch process immediately
     }
