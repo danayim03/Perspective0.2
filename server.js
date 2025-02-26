@@ -20,6 +20,13 @@ wss.on('connection', (ws) => {
       if (data.type === 'waiting') {
         const userId = data.user.id;
         
+        // Clear any existing matches for this user's WebSocket
+        const matchedWs = activeMatches.get(ws);
+        if (matchedWs) {
+          activeMatches.delete(matchedWs);
+          activeMatches.delete(ws);
+        }
+        
         // Update or add user to waiting pool
         waitingUsers.set(userId, data.user);
         userConnections.set(userId, ws);
@@ -95,7 +102,6 @@ wss.on('connection', (ws) => {
           }
         }
       } else if (data.type === 'chat') {
-        // Forward chat message to matched user
         const matchedWs = activeMatches.get(ws);
         if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
           matchedWs.send(JSON.stringify({
@@ -104,11 +110,9 @@ wss.on('connection', (ws) => {
           }));
         }
       } else if (data.type === 'endChat') {
-        // Find the matched user's WebSocket
         const matchedWs = activeMatches.get(ws);
         
         if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
-          // Notify the matched user that chat has ended
           matchedWs.send(JSON.stringify({ type: 'matchEnded' }));
         }
         
@@ -117,9 +121,6 @@ wss.on('connection', (ws) => {
           activeMatches.delete(matchedWs);
         }
         activeMatches.delete(ws);
-        
-        // Both users are now free to be matched again
-        console.log('Chat ended, users can now be matched again');
       }
     } catch (error) {
       console.error('Error processing message:', error);

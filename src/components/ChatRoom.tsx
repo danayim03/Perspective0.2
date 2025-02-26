@@ -151,8 +151,9 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const handleRematchClick = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
       setIsNormalChatEnd(true);
+      // Don't close the connection, just notify the other user and transition to matching
       ws.send(JSON.stringify({ type: 'endChat' }));
-      onRematch(); // This will trigger the rematch process immediately
+      onRematch();
     }
   };
 

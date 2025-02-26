@@ -79,6 +79,7 @@ const Index = () => {
   };
 
   const handleRematch = () => {
+    // Don't close the existing connection, just change state and send waiting signal
     if (ws && ws.readyState === WebSocket.OPEN) {
       setState("matching");
       ws.send(JSON.stringify({
