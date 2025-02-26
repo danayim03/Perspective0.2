@@ -18,6 +18,7 @@ const Index = () => {
   };
 
   const handleMatch = (websocket: WebSocket) => {
+    console.log("Match found, transitioning to chat");
     setWs(websocket);
     setState("chat");
   };
@@ -49,7 +50,7 @@ const Index = () => {
           user={user}
         />
       )}
-      {state === "chat" && (
+      {state === "chat" && ws && (
         <ChatRoom
           userRole={user?.role || "getter"}
           onGoBack={handleGoBack}
