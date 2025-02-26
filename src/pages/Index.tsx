@@ -20,6 +20,15 @@ const Index = () => {
     setState("chat");
   };
 
+  const handleGoBack = () => {
+    setState("welcome");
+    setUser(null);
+  };
+
+  const handleRematch = () => {
+    setState("matching");
+  };
+
   return (
     <div className="min-h-screen">
       {state === "welcome" && <WelcomeScreen onComplete={handleWelcomeComplete} />}
@@ -29,7 +38,13 @@ const Index = () => {
           role={user?.role || "getter"}
         />
       )}
-      {state === "chat" && <ChatRoom userRole={user?.role || "getter"} />}
+      {state === "chat" && (
+        <ChatRoom
+          userRole={user?.role || "getter"}
+          onGoBack={handleGoBack}
+          onRematch={handleRematch}
+        />
+      )}
     </div>
   );
 };

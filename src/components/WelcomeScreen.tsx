@@ -23,21 +23,24 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [targetOrientation, setTargetOrientation] = useState<Orientation | "">("");
 
   const handleSubmit = () => {
-    if (role && gender && orientation) {
-      onComplete({
-        role,
-        gender,
-        orientation,
-        ...(role === "getter" && {
-          targetGender,
-          targetOrientation,
-        }),
-      });
+    if (!role || !gender || !orientation) return;
+
+    const userData: Omit<User, "id"> = {
+      role,
+      gender,
+      orientation,
+    };
+
+    if (role === "getter" && targetGender && targetOrientation) {
+      userData.targetGender = targetGender;
+      userData.targetOrientation = targetOrientation;
     }
+
+    onComplete(userData);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-perspective-100 to-perspective-200 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-perspective-100 to-perspective-200 p-4 font-mono">
       <Card className="w-full max-w-md p-8 backdrop-blur-lg bg-white/90 rounded-2xl shadow-xl animate-fade-in">
         <div className="space-y-6">
           <div className="text-center space-y-2">
