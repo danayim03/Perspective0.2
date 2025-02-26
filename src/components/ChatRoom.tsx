@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Message, Role } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,9 +15,35 @@ interface ChatRoomProps {
 export const ChatRoom = ({ userRole, onGoBack, onRematch }: ChatRoomProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
+
+  useEffect(() => {
+    // Create WebSocket connection
+    const ws = new WebSocket("wss://your-websocket-server"); // You'll need to replace this with your actual WebSocket server URL
+    
+    ws.onopen = () => {
+      console.log("WebSocket Connected");
+      setWsConnection(ws);
+    };
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      setMessages(prev => [...prev, message]);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket Disconnected");
+    };
+
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
+  }, []);
 
   const handleSend = () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !wsConnection) return;
 
     const message: Message = {
       id: Date.now().toString(),
@@ -26,7 +52,8 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch }: ChatRoomProps) => {
       timestamp: new Date(),
     };
 
-    setMessages([...messages, message]);
+    wsConnection.send(JSON.stringify(message));
+    setMessages(prev => [...prev, message]);
     setNewMessage("");
   };
 
