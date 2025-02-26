@@ -13,103 +13,114 @@ wss.on('connection', (ws) => {
   console.log('New client connected');
 
   ws.on('message', (message) => {
-    const data = JSON.parse(message.toString());
-    
-    if (data.type === 'waiting') {
-      // Add user to waiting pool
-      waitingUsers.set(ws, data.user);
-      console.log('User waiting:', data.user);
+    try {
+      const data = JSON.parse(message.toString());
       
-      // If this is a getter, try to find a matching giver
-      if (data.user.role === 'getter') {
-        console.log('Looking for a match for getter:', data.user);
-        console.log('Current waiting users:', Array.from(waitingUsers.values()));
+      if (data.type === 'waiting') {
+        // Add user to waiting pool
+        waitingUsers.set(ws, data.user);
+        console.log('User waiting:', data.user);
         
-        for (const [potentialMatch, userData] of waitingUsers.entries()) {
-          console.log('Checking potential match:', userData);
+        // If this is a getter, try to find a matching giver
+        if (data.user.role === 'getter') {
+          console.log('Looking for a match for getter:', data.user);
+          console.log('Current waiting users:', Array.from(waitingUsers.values()));
           
-          const isMatch = 
-            potentialMatch !== ws && // Not the same user
-            userData.role === 'giver' && // Is a giver
-            userData.gender === data.user.targetGender && // Matches target gender
-            userData.orientation === data.user.targetOrientation; // Matches target orientation
-          
-          console.log('Match conditions:', {
-            differentUser: potentialMatch !== ws,
-            isGiver: userData.role === 'giver',
-            matchesGender: userData.gender === data.user.targetGender,
-            matchesOrientation: userData.orientation === data.user.targetOrientation
-          });
-          
-          if (isMatch) {
-            console.log('Match found between:', data.user, 'and', userData);
+          for (const [potentialMatch, userData] of waitingUsers.entries()) {
+            console.log('Checking potential match:', userData);
             
-            // Remove both users from waiting pool
-            waitingUsers.delete(ws);
-            waitingUsers.delete(potentialMatch);
+            const isMatch = 
+              potentialMatch !== ws && // Not the same user
+              userData.role === 'giver' && // Is a giver
+              userData.gender === data.user.targetGender && // Matches target gender
+              userData.orientation === data.user.targetOrientation; // Matches target orientation
             
-            // Add to active matches
-            activeMatches.set(ws, potentialMatch);
-            activeMatches.set(potentialMatch, ws);
+            console.log('Match conditions:', {
+              differentUser: potentialMatch !== ws,
+              isGiver: userData.role === 'giver',
+              matchesGender: userData.gender === data.user.targetGender,
+              matchesOrientation: userData.orientation === data.user.targetOrientation
+            });
             
-            // Notify both users
-            ws.send(JSON.stringify({ type: 'matched' }));
-            potentialMatch.send(JSON.stringify({ type: 'matched' }));
-            
-            break;
+            if (isMatch) {
+              console.log('Match found between:', data.user, 'and', userData);
+              
+              // Remove both users from waiting pool
+              waitingUsers.delete(ws);
+              waitingUsers.delete(potentialMatch);
+              
+              // Add to active matches
+              activeMatches.set(ws, potentialMatch);
+              activeMatches.set(potentialMatch, ws);
+              
+              // Notify both users
+              ws.send(JSON.stringify({ type: 'matched' }));
+              potentialMatch.send(JSON.stringify({ type: 'matched' }));
+              
+              break;
+            }
           }
         }
-      }
-      // If this is a giver, check if any getters are waiting for someone like them
-      else if (data.user.role === 'giver') {
-        console.log('New giver joined, checking for waiting getters');
-        
-        for (const [potentialMatch, userData] of waitingUsers.entries()) {
-          if (potentialMatch !== ws && // Not the same user
-              userData.role === 'getter' && // Is a getter
-              data.user.gender === userData.targetGender && // Giver matches getter's target gender
-              data.user.orientation === userData.targetOrientation) { // Giver matches getter's target orientation
-            
-            console.log('Match found between giver:', data.user, 'and getter:', userData);
-            
-            // Remove both users from waiting pool
-            waitingUsers.delete(ws);
-            waitingUsers.delete(potentialMatch);
-            
-            // Add to active matches
-            activeMatches.set(ws, potentialMatch);
-            activeMatches.set(potentialMatch, ws);
-            
-            // Notify both users
-            ws.send(JSON.stringify({ type: 'matched' }));
-            potentialMatch.send(JSON.stringify({ type: 'matched' }));
-            
-            break;
+        // If this is a giver, check if any getters are waiting for someone like them
+        else if (data.user.role === 'giver') {
+          console.log('New giver joined, checking for waiting getters');
+          
+          for (const [potentialMatch, userData] of waitingUsers.entries()) {
+            if (potentialMatch !== ws && // Not the same user
+                userData.role === 'getter' && // Is a getter
+                data.user.gender === userData.targetGender && // Giver matches getter's target gender
+                data.user.orientation === userData.targetOrientation) { // Giver matches getter's target orientation
+              
+              console.log('Match found between giver:', data.user, 'and getter:', userData);
+              
+              // Remove both users from waiting pool
+              waitingUsers.delete(ws);
+              waitingUsers.delete(potentialMatch);
+              
+              // Add to active matches
+              activeMatches.set(ws, potentialMatch);
+              activeMatches.set(potentialMatch, ws);
+              
+              // Notify both users
+              ws.send(JSON.stringify({ type: 'matched' }));
+              potentialMatch.send(JSON.stringify({ type: 'matched' }));
+              
+              break;
+            }
           }
         }
+      } else if (data.type === 'chat') {
+        // Forward chat message to matched user
+        const matchedUser = activeMatches.get(ws);
+        if (matchedUser && matchedUser.readyState === WebSocket.OPEN) {
+          matchedUser.send(JSON.stringify({
+            type: 'chat',
+            message: data.message
+          }));
+        }
       }
-    } else if (data.type === 'chat') {
-      // Forward chat message to matched user
-      const matchedUser = activeMatches.get(ws);
-      if (matchedUser && matchedUser.readyState === WebSocket.OPEN) {
-        matchedUser.send(JSON.stringify({
-          type: 'chat',
-          message: data.message
-        }));
-      }
+    } catch (error) {
+      console.error('Error processing message:', error);
     }
   });
 
   ws.on('close', () => {
     console.log('Client disconnected');
-    // Clean up
-    waitingUsers.delete(ws);
+    
+    // Notify matched user if exists
     const matchedUser = activeMatches.get(ws);
-    if (matchedUser) {
+    if (matchedUser && matchedUser.readyState === WebSocket.OPEN) {
       matchedUser.send(JSON.stringify({ type: 'matchEnded' }));
       activeMatches.delete(matchedUser);
     }
+    
+    // Clean up
+    waitingUsers.delete(ws);
     activeMatches.delete(ws);
+  });
+
+  ws.on('error', (error) => {
+    console.error('WebSocket error:', error);
   });
 });
 
