@@ -4,7 +4,7 @@ import { Role, User } from "@/types";
 import { useToast } from "@/components/ui/use-toast";
 
 interface MatchingScreenProps {
-  onMatch: () => void;
+  onMatch: (ws: WebSocket) => void;
   role: Role;
   user: User;
 }
@@ -32,7 +32,7 @@ export const MatchingScreen = ({ onMatch, role, user }: MatchingScreenProps) => 
           title: "Match found!",
           description: "Connecting you to chat...",
         });
-        onMatch();
+        onMatch(websocket);
       }
     };
 

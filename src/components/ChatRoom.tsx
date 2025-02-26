@@ -11,28 +11,25 @@ interface ChatRoomProps {
   userRole: Role;
   onGoBack: () => void;
   onRematch: () => void;
+  ws?: WebSocket;
 }
 
-export const ChatRoom = ({ userRole, onGoBack, onRematch }: ChatRoomProps) => {
+export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    // Create WebSocket connection
-    const ws = new WebSocket("ws://localhost:8080");
-    
-    ws.onopen = () => {
-      console.log("WebSocket Connected");
-      setWsConnection(ws);
+    if (!ws) {
       toast({
-        title: "Connected to chat",
-        description: "You can now start sending messages",
+        title: "Connection Error",
+        description: "No WebSocket connection available",
+        variant: "destructive",
       });
-    };
+      return;
+    }
 
-    ws.onmessage = (event) => {
+    const messageHandler = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
       if (data.type === 'chat') {
         const newMessage: Message = {
@@ -52,24 +49,15 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch }: ChatRoomProps) => {
       }
     };
 
-    ws.onclose = () => {
-      console.log("WebSocket Disconnected");
-      toast({
-        title: "Disconnected from chat",
-        description: "Please refresh to reconnect",
-        variant: "destructive",
-      });
-    };
+    ws.addEventListener('message', messageHandler);
 
     return () => {
-      if (ws) {
-        ws.close();
-      }
+      ws.removeEventListener('message', messageHandler);
     };
-  }, []);
+  }, [ws, onGoBack]);
 
   const handleSend = () => {
-    if (!newMessage.trim() || !wsConnection) return;
+    if (!newMessage.trim() || !ws) return;
 
     const message: Message = {
       id: Date.now().toString(),
@@ -78,7 +66,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch }: ChatRoomProps) => {
       timestamp: new Date(),
     };
 
-    wsConnection.send(JSON.stringify({
+    ws.send(JSON.stringify({
       type: 'chat',
       message: newMessage
     }));

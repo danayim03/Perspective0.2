@@ -10,22 +10,32 @@ type AppState = "welcome" | "matching" | "chat";
 const Index = () => {
   const [state, setState] = useState<AppState>("welcome");
   const [user, setUser] = useState<User | null>(null);
+  const [ws, setWs] = useState<WebSocket | null>(null);
 
   const handleWelcomeComplete = (userData: Omit<User, "id">) => {
     setUser({ ...userData, id: Date.now().toString() });
     setState("matching");
   };
 
-  const handleMatch = () => {
+  const handleMatch = (websocket: WebSocket) => {
+    setWs(websocket);
     setState("chat");
   };
 
   const handleGoBack = () => {
+    if (ws) {
+      ws.close();
+    }
     setState("welcome");
     setUser(null);
+    setWs(null);
   };
 
   const handleRematch = () => {
+    if (ws) {
+      ws.close();
+    }
+    setWs(null);
     setState("matching");
   };
 
@@ -44,6 +54,7 @@ const Index = () => {
           userRole={user?.role || "getter"}
           onGoBack={handleGoBack}
           onRematch={handleRematch}
+          ws={ws}
         />
       )}
     </div>
