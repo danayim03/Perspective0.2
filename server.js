@@ -103,6 +103,23 @@ wss.on('connection', (ws) => {
             message: data.message
           }));
         }
+      } else if (data.type === 'endChat') {
+        // Find the matched user's WebSocket
+        const matchedWs = activeMatches.get(ws);
+        
+        if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
+          // Notify the matched user that chat has ended
+          matchedWs.send(JSON.stringify({ type: 'matchEnded' }));
+        }
+        
+        // Remove both users from active matches
+        if (matchedWs) {
+          activeMatches.delete(matchedWs);
+        }
+        activeMatches.delete(ws);
+        
+        // Both users are now free to be matched again
+        console.log('Chat ended, users can now be matched again');
       }
     } catch (error) {
       console.error('Error processing message:', error);
@@ -120,8 +137,14 @@ wss.on('connection', (ws) => {
       activeMatches.delete(ws);
     }
     
-    // Note: We intentionally don't remove users from the waiting pool here
-    // They will be removed only when matched or when explicitly leaving
+    // Remove user from waiting pool and connections
+    for (const [userId, userWs] of userConnections.entries()) {
+      if (userWs === ws) {
+        userConnections.delete(userId);
+        waitingUsers.delete(userId);
+        break;
+      }
+    }
   });
 
   ws.on('error', (error) => {
