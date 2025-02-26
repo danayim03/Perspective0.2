@@ -1,64 +1,13 @@
 
-import { useEffect, useState } from "react";
 import { Role, User } from "@/types";
-import { useToast } from "@/components/ui/use-toast";
 
 interface MatchingScreenProps {
-  onMatch: (ws: WebSocket) => void;
+  ws: WebSocket | null;
   role: Role;
   user: User;
 }
 
-export const MatchingScreen = ({ onMatch, role, user }: MatchingScreenProps) => {
-  const [ws, setWs] = useState<WebSocket | null>(null);
-  const { toast } = useToast();
-  const [isMatched, setIsMatched] = useState(false);
-
-  useEffect(() => {
-    const websocket = new WebSocket("ws://localhost:8080");
-    
-    websocket.onopen = () => {
-      console.log("WebSocket Connected");
-      // Send user data to server for matching
-      websocket.send(JSON.stringify({
-        type: 'waiting',
-        user: user
-      }));
-    };
-
-    websocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'matched') {
-        toast({
-          title: "Match found!",
-          description: "Connecting you to chat...",
-        });
-        setIsMatched(true);
-        onMatch(websocket);
-      }
-    };
-
-    websocket.onclose = () => {
-      if (!isMatched) {
-        console.log("WebSocket Disconnected");
-        toast({
-          title: "Connection lost",
-          description: "Please try again",
-          variant: "destructive",
-        });
-      }
-    };
-
-    setWs(websocket);
-
-    return () => {
-      // Only close the websocket if we haven't been matched
-      if (websocket && !isMatched) {
-        websocket.close();
-      }
-    };
-  }, [onMatch, user, isMatched]);
-
+export const MatchingScreen = ({ role, ws }: MatchingScreenProps) => {
   const messages = {
     getter: {
       title: "Finding your perspective giver...",
