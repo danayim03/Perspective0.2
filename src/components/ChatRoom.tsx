@@ -53,7 +53,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           };
           setMessages(prev => [...prev, newMessage]);
         } else if (data.type === 'matchEnded') {
-          setIsNormalChatEnd(true);
+          setIsNormalChatEnd(true); // Set this to true when receiving matchEnded
           const systemMessage: Message = {
             id: Date.now().toString(),
             senderId: "system",
