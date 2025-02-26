@@ -8,6 +8,9 @@ import { useToast } from "@/components/ui/use-toast";
 
 type AppState = "welcome" | "matching" | "chat";
 
+// Get WebSocket URL from environment variable or fallback to localhost in development
+const WS_URL = import.meta.env.VITE_WS_URL || "ws://localhost:8080";
+
 const Index = () => {
   const [state, setState] = useState<AppState>("welcome");
   const [user, setUser] = useState<User | null>(null);
@@ -17,7 +20,7 @@ const Index = () => {
   useEffect(() => {
     // Only establish connection when user enters the app
     if (user && !ws) {
-      const websocket = new WebSocket("ws://localhost:8080");
+      const websocket = new WebSocket(WS_URL);
       
       websocket.onopen = () => {
         console.log("WebSocket Connected");

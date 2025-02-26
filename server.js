@@ -1,7 +1,7 @@
-
 import { WebSocketServer } from 'ws';
 
-const wss = new WebSocketServer({ port: 8080 });
+const port = process.env.PORT || 8080;
+const wss = new WebSocketServer({ port });
 
 // Store waiting users
 const waitingUsers = new Map(); // userId -> user data
@@ -153,4 +153,4 @@ wss.on('connection', (ws) => {
   });
 });
 
-console.log('WebSocket server is running on ws://localhost:8080');
+console.log(`WebSocket server is running on port ${port}`);
