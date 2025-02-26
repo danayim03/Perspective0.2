@@ -13,51 +13,64 @@ export const MatchingScreen = ({ onMatch, role, user }: MatchingScreenProps) => 
   const [ws, setWs] = useState<WebSocket | null>(null);
   const { toast } = useToast();
   const [isMatched, setIsMatched] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
 
   useEffect(() => {
-    const websocket = new WebSocket("ws://localhost:8080");
-    
-    websocket.onopen = () => {
-      console.log("WebSocket Connected");
-      // Send user data to server for matching
-      websocket.send(JSON.stringify({
-        type: 'waiting',
-        user: user
-      }));
+    const connectWebSocket = () => {
+      if (isConnecting || isMatched) return;
+      
+      setIsConnecting(true);
+      const websocket = new WebSocket("ws://localhost:8080");
+      
+      websocket.onopen = () => {
+        console.log("WebSocket Connected");
+        setIsConnecting(false);
+        // Send user data to server for matching
+        websocket.send(JSON.stringify({
+          type: 'waiting',
+          user: user
+        }));
+      };
+
+      websocket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'matched') {
+          toast({
+            title: "Match found!",
+            description: "Connecting you to chat...",
+          });
+          setIsMatched(true);
+          onMatch(websocket);
+        }
+      };
+
+      websocket.onclose = () => {
+        if (!isMatched) {
+          console.log("WebSocket Disconnected - Attempting to reconnect...");
+          setIsConnecting(false);
+          setWs(null);
+          // Attempt to reconnect after a delay
+          setTimeout(connectWebSocket, 2000);
+        }
+      };
+
+      websocket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        setIsConnecting(false);
+      };
+
+      setWs(websocket);
     };
 
-    websocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'matched') {
-        toast({
-          title: "Match found!",
-          description: "Connecting you to chat...",
-        });
-        setIsMatched(true);
-        onMatch(websocket);
-      }
-    };
-
-    websocket.onclose = () => {
-      if (!isMatched) {
-        console.log("WebSocket Disconnected");
-        toast({
-          title: "Connection lost",
-          description: "Please try again",
-          variant: "destructive",
-        });
-      }
-    };
-
-    setWs(websocket);
+    connectWebSocket();
 
     return () => {
       // Only close the websocket if we haven't been matched
-      if (websocket && !isMatched) {
-        websocket.close();
+      if (ws && !isMatched) {
+        ws.close();
       }
     };
-  }, [onMatch, user, isMatched]);
+  }, [onMatch, user, isMatched, isConnecting]);
 
   const messages = {
     getter: {
@@ -78,6 +91,9 @@ export const MatchingScreen = ({ onMatch, role, user }: MatchingScreenProps) => 
           {messages[role].title}
         </h2>
         <p className="text-gray-600">{messages[role].subtitle}</p>
+        {isConnecting && (
+          <p className="text-sm text-gray-500">Connecting to server...</p>
+        )}
       </div>
     </div>
   );
