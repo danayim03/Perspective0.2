@@ -52,10 +52,18 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           };
           setMessages(prev => [...prev, newMessage]);
         } else if (data.type === 'matchEnded') {
+          // Add system message about chat ending
+          const systemMessage: Message = {
+            id: Date.now().toString(),
+            senderId: "system",
+            content: "Your chat partner has ended the chat.",
+            timestamp: new Date(),
+          };
+          setMessages(prev => [...prev, systemMessage]);
+          setIsConnected(false);
           toast({
             title: "Chat ended",
-            description: "Your match has disconnected",
-            variant: "destructive",
+            description: "Your chat partner has ended the chat",
           });
           onGoBack();
         }
@@ -119,12 +127,33 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     }
   };
 
+  const handleEndChat = () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'endChat' }));
+      const systemMessage: Message = {
+        id: Date.now().toString(),
+        senderId: "system",
+        content: "You have ended the chat.",
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, systemMessage]);
+      onGoBack();
+    }
+  };
+
+  const handleRematchClick = () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'endChat' }));
+      onRematch(); // This will trigger the rematch process immediately
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-perspective-100 to-perspective-200 p-4 font-mono">
       <Card className="flex-1 flex flex-col max-w-2xl w-full mx-auto backdrop-blur-lg bg-white/90 rounded-2xl shadow-xl">
         <div className="p-4 border-b flex items-center justify-between">
           <Button
-            onClick={onGoBack}
+            onClick={handleEndChat}
             variant="ghost"
             className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100"
           >
@@ -132,7 +161,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
             End Session
           </Button>
           <Button
-            onClick={onRematch}
+            onClick={handleRematchClick}
             variant="ghost"
             className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100"
           >
@@ -156,14 +185,20 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
               <div
                 key={message.id}
                 className={`flex ${
-                  message.senderId === "user1" ? "justify-end" : "justify-start"
+                  message.senderId === "system" 
+                    ? "justify-center"
+                    : message.senderId === "user1" 
+                      ? "justify-end" 
+                      : "justify-start"
                 }`}
               >
                 <div
                   className={`max-w-[80%] p-3 rounded-lg ${
-                    message.senderId === "user1"
-                      ? "bg-perspective-400 text-white"
-                      : "bg-perspective-100 text-gray-900"
+                    message.senderId === "system"
+                      ? "bg-gray-200 text-gray-600"
+                      : message.senderId === "user1"
+                        ? "bg-perspective-400 text-white"
+                        : "bg-perspective-100 text-gray-900"
                   }`}
                 >
                   {message.content}
