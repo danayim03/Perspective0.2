@@ -183,8 +183,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Button 
             onClick={() => setGender("male")}
             className={`rounded-full px-6 ${gender === "male" 
-              ? "bg-perspective-300 text-gray-800" 
-              : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              ? "bg-gray-200 text-gray-800" 
+              : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
             onKeyDown={(e) => handleKeyDown(e, () => setGender("male"))}
           >
             Male 👨
@@ -193,8 +193,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Button 
             onClick={() => setGender("female")}
             className={`rounded-full px-6 ${gender === "female" 
-              ? "bg-perspective-300 text-gray-800" 
-              : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              ? "bg-gray-200 text-gray-800" 
+              : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
             onKeyDown={(e) => handleKeyDown(e, () => setGender("female"))}
           >
             Female 👩
@@ -203,8 +203,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Button 
             onClick={() => setGender("non-binary")}
             className={`rounded-full px-6 ${gender === "non-binary" 
-              ? "bg-perspective-300 text-gray-800" 
-              : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              ? "bg-gray-200 text-gray-800" 
+              : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
             onKeyDown={(e) => handleKeyDown(e, () => setGender("non-binary"))}
           >
             Non-binary 🌈
@@ -215,8 +215,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Button 
             onClick={() => setOrientation("straight")}
             className={`rounded-full px-6 ${orientation === "straight" 
-              ? "bg-perspective-300 text-gray-800" 
-              : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              ? "bg-gray-200 text-gray-800" 
+              : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
             onKeyDown={(e) => handleKeyDown(e, () => setOrientation("straight"))}
           >
             Straight 💑
@@ -225,8 +225,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Button 
             onClick={() => setOrientation("gay")}
             className={`rounded-full px-6 ${orientation === "gay" 
-              ? "bg-perspective-300 text-gray-800" 
-              : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              ? "bg-gray-200 text-gray-800" 
+              : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
             onKeyDown={(e) => handleKeyDown(e, () => setOrientation("gay"))}
           >
             Gay 🏳️‍🌈
@@ -235,8 +235,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Button 
             onClick={() => setOrientation("bisexual")}
             className={`rounded-full px-6 ${orientation === "bisexual" 
-              ? "bg-perspective-300 text-gray-800" 
-              : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              ? "bg-gray-200 text-gray-800" 
+              : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
             onKeyDown={(e) => handleKeyDown(e, () => setOrientation("bisexual"))}
           >
             Bisexual 💖
@@ -251,8 +251,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             <Button 
               onClick={() => setTargetGender("male")}
               className={`rounded-full px-6 ${targetGender === "male" 
-                ? "bg-perspective-300 text-gray-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+                ? "bg-gray-200 text-gray-800" 
+                : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("male"))}
             >
               Male 👨
@@ -261,8 +261,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             <Button 
               onClick={() => setTargetGender("female")}
               className={`rounded-full px-6 ${targetGender === "female" 
-                ? "bg-perspective-300 text-gray-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+                ? "bg-gray-200 text-gray-800" 
+                : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("female"))}
             >
               Female 👩
@@ -271,8 +271,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             <Button 
               onClick={() => setTargetGender("non-binary")}
               className={`rounded-full px-6 ${targetGender === "non-binary" 
-                ? "bg-perspective-300 text-gray-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+                ? "bg-gray-200 text-gray-800" 
+                : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("non-binary"))}
             >
               Non-binary 🌈
@@ -283,8 +283,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             <Button 
               onClick={() => setTargetOrientation("straight")}
               className={`rounded-full px-6 ${targetOrientation === "straight" 
-                ? "bg-perspective-300 text-gray-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+                ? "bg-gray-200 text-gray-800" 
+                : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("straight"))}
             >
               Straight 💑
@@ -293,8 +293,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             <Button 
               onClick={() => setTargetOrientation("gay")}
               className={`rounded-full px-6 ${targetOrientation === "gay" 
-                ? "bg-perspective-300 text-gray-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+                ? "bg-gray-200 text-gray-800" 
+                : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("gay"))}
             >
               Gay 🏳️‍🌈
@@ -303,8 +303,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             <Button 
               onClick={() => setTargetOrientation("bisexual")}
               className={`rounded-full px-6 ${targetOrientation === "bisexual" 
-                ? "bg-perspective-300 text-gray-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+                ? "bg-gray-200 text-gray-800" 
+                : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("bisexual"))}
             >
               Bisexual 💖
