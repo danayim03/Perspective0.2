@@ -127,7 +127,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             setRole("getter");
             setStep(3);
           }}
-          className="rounded-full bg-perspective-300 hover:bg-perspective-400 text-gray-800 font-normal py-6 px-8"
+          className="rounded-full bg-perspective-300 hover:bg-perspective-400 hover:font-bold text-gray-800 font-normal py-6 px-8"
           onKeyDown={(e) => handleKeyDown(e, () => {
             setRole("getter");
             setStep(3);
@@ -141,7 +141,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             setRole("giver");
             setStep(3);
           }}
-          className="rounded-full bg-perspective-300 hover:bg-perspective-400 text-gray-800 font-normal py-6 px-8"
+          className="rounded-full bg-perspective-300 hover:bg-perspective-400 hover:font-bold text-gray-800 font-normal py-6 px-8"
           onKeyDown={(e) => handleKeyDown(e, () => {
             setRole("giver");
             setStep(3);
