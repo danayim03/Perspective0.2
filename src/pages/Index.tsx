@@ -10,6 +10,10 @@ type AppState = "welcome" | "matching" | "chat";
 
 // Get WebSocket URL from environment variable or fallback to localhost in development
 const WS_URL = import.meta.env.VITE_WS_URL || "ws://localhost:8080";
+const socket = new WebSocket(WS_URL);
+socket.onopen = () => {
+  console.log("WebSocket Connected");
+};
 
 const Index = () => {
   const [state, setState] = useState<AppState>("welcome");
