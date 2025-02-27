@@ -109,7 +109,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             }
           }}
         />
-        
+
         <Button 
           onClick={() => setStep(2)} 
           disabled={!nickname.trim()}
