@@ -207,7 +207,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
             onKeyDown={(e) => handleKeyDown(e, () => setGender("non-binary"))}
           >
-            Non-binary 🌈
+            Non-binary 
           </Button>
         </div>
         
@@ -219,7 +219,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
             onKeyDown={(e) => handleKeyDown(e, () => setOrientation("straight"))}
           >
-            Straight 💑
+            Straight 
           </Button>
           
           <Button 
@@ -229,7 +229,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
             onKeyDown={(e) => handleKeyDown(e, () => setOrientation("gay"))}
           >
-            Gay 🏳️‍🌈
+            Gay 
           </Button>
           
           <Button 
@@ -239,7 +239,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
             onKeyDown={(e) => handleKeyDown(e, () => setOrientation("bisexual"))}
           >
-            Bisexual 💖
+            Bisexual 
           </Button>
         </div>
       </div>
@@ -275,7 +275,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("non-binary"))}
             >
-              Non-binary 🌈
+              Non-binary 
             </Button>
           </div>
           
@@ -287,7 +287,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("straight"))}
             >
-              Straight 💑
+              Straight 
             </Button>
             
             <Button 
@@ -297,7 +297,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("gay"))}
             >
-              Gay 🏳️‍🌈
+              Gay 
             </Button>
             
             <Button 
@@ -307,7 +307,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("bisexual"))}
             >
-              Bisexual 💖
+              Bisexual
             </Button>
           </div>
         </div>
@@ -320,10 +320,10 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             !gender || !orientation || 
             (role === "getter" && (!targetGender || !targetOrientation))
           }
-          className="rounded-full bg-perspective-400 hover:bg-perspective-500 text-white font-medium py-2 px-8"
+          className="rounded-full bg-perspective-400 hover:bg-perspective-500 text-gray-500 font-medium py-2 px-8"
           onKeyDown={(e) => handleKeyDown(e, () => handleSubmit())}
         >
-          Proceed! 🚀
+          Proceed
         </Button>
         
         <div className="mt-4">
