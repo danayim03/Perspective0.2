@@ -21,7 +21,7 @@ export default {
     extend: {
       fontFamily: {
         mono: ["'Roboto Mono'", "monospace"],
-        roboto: ["Roboto", "sans-serif"],
+        roboto: ["'Roboto Mono'", "monospace"], // Ensure this maps to the same font
       },
       colors: {
         border: "hsl(var(--border))",

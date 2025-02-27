@@ -361,7 +361,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center pt-16 p-4 font-roboto">
+    <div className="min-h-screen flex items-center justify-center pt-16 p-4 font-mono">
       <div className="w-full max-w-4xl animate-fade-in">
         {step === 1 && renderStep1()}
         {step === 2 && renderStep2()}

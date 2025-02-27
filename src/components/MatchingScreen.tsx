@@ -20,7 +20,7 @@ export const MatchingScreen = ({ role, ws, user }: MatchingScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center pt-16 font-roboto">
+    <div className="min-h-screen flex items-center justify-center pt-16 font-mono">
       <div className="text-center space-y-8 max-w-xl">
         <h2 className="text-3xl font-medium text-gray-900">
           {messages[role].title}
