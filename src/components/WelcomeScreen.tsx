@@ -50,6 +50,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         currentIndexFirst++;
       } else {
         clearInterval(intervalIdFirst);
+        setTypingComplete(true);
+        // Save that animation has been played
+        localStorage.setItem('typingAnimationPlayed', 'true');
       }
     }, 30); // Typing speed for first line
     
