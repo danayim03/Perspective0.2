@@ -7,7 +7,7 @@ const PerspectiveName = () => (
 
 export default function About() {
   return (
-    <div className="p-8 pt-24">
+    <div className="p-8 pt-24 font-roboto">
       <h1 className="text-4xl font-medium mb-12">
         New to <PerspectiveName />?
       </h1>

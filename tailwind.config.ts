@@ -21,6 +21,7 @@ export default {
     extend: {
       fontFamily: {
         mono: ["Space Mono", "monospace"],
+        roboto: ["Roboto", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
