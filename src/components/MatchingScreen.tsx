@@ -10,12 +10,12 @@ interface MatchingScreenProps {
 export const MatchingScreen = ({ role, ws, user }: MatchingScreenProps) => {
   const messages = {
     getter: {
-      title: "Give us a sec... Matching you with a straight male...",
-      subtitle: "We're connecting you with someone who can help",
+      title: "Give us a sec... Matching you with a straight male... 🔍",
+      subtitle: "We're connecting you with someone who can help 💡",
     },
     giver: {
-      title: "Finding someone who needs your perspective...",
-      subtitle: "We're connecting you with someone seeking advice",
+      title: "Finding someone who needs your perspective... 🍵👀",
+      subtitle: "We're connecting you with someone seeking advice 💭",
     },
   };
 
@@ -34,7 +34,7 @@ export const MatchingScreen = ({ role, ws, user }: MatchingScreenProps) => {
           className="mt-8 text-gray-500 hover:text-gray-800 transition-colors"
           onClick={() => window.location.reload()}
         >
-          Go Back
+          ← Go Back
         </button>
       </div>
     </div>

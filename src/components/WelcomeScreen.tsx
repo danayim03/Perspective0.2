@@ -45,18 +45,18 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const renderStep1 = () => (
     <div className="text-center space-y-8">
       <div>
-        <h1 className="text-4xl font-medium mb-2">Perspective</h1>
+        <h1 className="text-4xl font-medium mb-2">Perspective ✨</h1>
         <p className="text-gray-600">
-          Curious about how your crush might think?
+          Curious about how your crush might think? 💭
         </p>
         <p className="text-gray-600">
-          Get anonymous advice from someone who matches your crush's gender and sexuality from...
+          Get anonymous advice from someone who matches your crush's gender and sexuality... 🔍
         </p>
       </div>
 
       <div className="space-y-3">
         <Input 
-          placeholder="Enter a nickname to begin chatting..." 
+          placeholder="Enter a nickname to begin chatting... 😊" 
           className="max-w-md mx-auto rounded-full bg-perspective-100 border-0 py-6 px-8 text-center"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
@@ -67,7 +67,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           disabled={!nickname.trim()}
           className="rounded-full mx-auto bg-perspective-300 hover:bg-perspective-400 text-gray-800 font-normal"
         >
-          Continue
+          Continue 👉
         </Button>
       </div>
     </div>
@@ -75,7 +75,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
 
   const renderStep2 = () => (
     <div className="text-center space-y-8">
-      <h1 className="text-3xl font-medium">Glad you're here, {nickname}!</h1>
+      <h1 className="text-3xl font-medium">Glad you're here, {nickname}! 👋</h1>
       <p className="text-lg">You are here to:</p>
       
       <div className="flex justify-center gap-4">
@@ -86,7 +86,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           }}
           className="rounded-full bg-perspective-300 hover:bg-perspective-400 text-gray-800 font-normal py-6 px-8"
         >
-          Get a perspective
+          Get a perspective 💡
         </Button>
         
         <Button 
@@ -96,7 +96,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           }}
           className="rounded-full bg-perspective-300 hover:bg-perspective-400 text-gray-800 font-normal py-6 px-8"
         >
-          Give a perspective
+          Give a perspective 🍵👀
         </Button>
       </div>
       
@@ -105,7 +105,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         variant="ghost" 
         className="text-gray-500 hover:text-gray-800"
       >
-        Go Back
+        ← Go Back
       </Button>
     </div>
   );
@@ -114,8 +114,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     <div className="text-center space-y-6">
       <h1 className="text-2xl font-medium">
         {role === "getter" 
-          ? "Whose perspective would you like to gain today, " + nickname + "?"
-          : "Tell us about yourself, " + nickname
+          ? `Whose perspective would you like to gain today, ${nickname}? 🤔`
+          : `Tell us about yourself, ${nickname} 📝`
         }
       </h1>
       
@@ -127,7 +127,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               ? "bg-perspective-300 text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
           >
-            Male
+            Male 👨
           </Button>
           
           <Button 
@@ -136,7 +136,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               ? "bg-perspective-300 text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
           >
-            Female
+            Female 👩
           </Button>
           
           <Button 
@@ -145,7 +145,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               ? "bg-perspective-300 text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
           >
-            Non-binary
+            Non-binary 🌈
           </Button>
         </div>
         
@@ -156,7 +156,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               ? "bg-perspective-300 text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
           >
-            Straight
+            Straight 💑
           </Button>
           
           <Button 
@@ -165,7 +165,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               ? "bg-perspective-300 text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
           >
-            Gay
+            Gay 🏳️‍🌈
           </Button>
           
           <Button 
@@ -174,14 +174,14 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               ? "bg-perspective-300 text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
           >
-            Bisexual
+            Bisexual 💖
           </Button>
         </div>
       </div>
       
       {role === "getter" && gender && orientation && (
         <div>
-          <h2 className="text-xl font-medium mt-8 mb-4">And your crush is:</h2>
+          <h2 className="text-xl font-medium mt-8 mb-4">And your crush is: 💘</h2>
           
           <div className="space-y-4 max-w-md mx-auto">
             <div className="flex justify-center gap-4">
@@ -191,7 +191,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                   ? "bg-perspective-300 text-gray-800" 
                   : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
               >
-                Male
+                Male 👨
               </Button>
               
               <Button 
@@ -200,7 +200,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                   ? "bg-perspective-300 text-gray-800" 
                   : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
               >
-                Female
+                Female 👩
               </Button>
               
               <Button 
@@ -209,7 +209,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                   ? "bg-perspective-300 text-gray-800" 
                   : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
               >
-                Non-binary
+                Non-binary 🌈
               </Button>
             </div>
             
@@ -220,7 +220,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                   ? "bg-perspective-300 text-gray-800" 
                   : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
               >
-                Straight
+                Straight 💑
               </Button>
               
               <Button 
@@ -229,7 +229,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                   ? "bg-perspective-300 text-gray-800" 
                   : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
               >
-                Gay
+                Gay 🏳️‍🌈
               </Button>
               
               <Button 
@@ -238,7 +238,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                   ? "bg-perspective-300 text-gray-800" 
                   : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
               >
-                Bisexual
+                Bisexual 💖
               </Button>
             </div>
           </div>
@@ -254,7 +254,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           }
           className="rounded-full bg-perspective-400 hover:bg-perspective-500 text-white font-medium py-2 px-8"
         >
-          Proceed!
+          Proceed! 🚀
         </Button>
         
         <div className="mt-4">
@@ -263,14 +263,14 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             variant="ghost" 
             className="text-gray-500 hover:text-gray-800"
           >
-            Go Back
+            ← Go Back
           </Button>
         </div>
         
         <div className="mt-8 text-xs text-gray-500 max-w-md mx-auto">
           *We're working to include more genders and sexualities, but with our small (and growing!) community, 
           we're starting simple—stay tuned as we grow! If you don't see your gender, sexuality, or your crush's 
-          represented, we'd love to hear from you—please email us and help us make Perspective even better!
+          represented, we'd love to hear from you—please email us and help us make Perspective even better! 💌
         </div>
       </div>
     </div>
