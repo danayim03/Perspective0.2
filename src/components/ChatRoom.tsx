@@ -158,37 +158,37 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-perspective-100 to-perspective-200 p-2 sm:p-4 font-mono">
-      <Card className="flex-1 flex flex-col w-full mx-auto backdrop-blur-lg bg-white/90 rounded-xl sm:rounded-2xl shadow-xl overflow-hidden">
-        <div className="p-2 sm:p-4 border-b flex items-center justify-between">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-perspective-100 to-perspective-200 p-1 sm:p-2 md:p-4 font-mono">
+      <Card className="flex-1 flex flex-col w-full mx-auto backdrop-blur-lg bg-white/90 rounded-lg sm:rounded-xl md:rounded-2xl shadow-xl overflow-hidden">
+        <div className="p-2 sm:p-3 md:p-4 border-b flex items-center justify-between">
           <Button
             onClick={handleEndChat}
             variant="ghost"
             size="sm"
-            className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100"
+            className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
           >
-            <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-            <span className="text-xs sm:text-sm">End</span>
+            <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+            <span className="hidden xs:inline">End</span>
           </Button>
           <Button
             onClick={handleRematchClick}
             variant="ghost"
             size="sm"
-            className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100"
+            className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
           >
-            <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-            <span className="text-xs sm:text-sm">Rematch</span>
+            <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+            <span className="hidden xs:inline">Rematch</span>
           </Button>
         </div>
 
-        <div className="flex-1 p-2 sm:p-4 overflow-y-auto space-y-3 sm:space-y-4">
+        <div className="flex-1 p-2 sm:p-3 md:p-4 overflow-y-auto space-y-2 sm:space-y-3 md:space-y-4">
           {!isConnected && (
-            <div className="h-full flex items-center justify-center text-red-500 text-sm sm:text-base">
+            <div className="h-full flex items-center justify-center text-red-500 text-xs sm:text-sm md:text-base">
               Connection lost. Please try again.
             </div>
           )}
           {isConnected && messages.length === 0 ? (
-            <div className="h-full flex items-center justify-center text-gray-500 text-sm sm:text-base">
+            <div className="h-full flex items-center justify-center text-gray-500 text-xs sm:text-sm md:text-base">
               No messages yet. Start the conversation!
             </div>
           ) : (
@@ -204,7 +204,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 }`}
               >
                 <div
-                  className={`max-w-[85%] p-2 sm:p-3 rounded-lg text-sm sm:text-base ${
+                  className={`max-w-[85%] p-2 sm:p-3 rounded-lg text-xs sm:text-sm ${
                     message.senderId === "system"
                       ? "bg-gray-200 text-gray-600"
                       : message.senderId === "user1"
@@ -219,23 +219,23 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           )}
         </div>
 
-        <div className="p-2 sm:p-4 border-t">
+        <div className="p-2 sm:p-3 md:p-4 border-t">
           <div className="flex gap-1 sm:gap-2">
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder={isConnected ? "Type a message..." : "Connecting..."}
               onKeyPress={(e) => e.key === "Enter" && handleSend()}
-              className="flex-1 bg-white/50 text-sm h-10"
+              className="flex-1 bg-white/50 text-xs sm:text-sm h-8 sm:h-10"
               disabled={!isConnected}
             />
             <Button
               onClick={handleSend}
               disabled={!newMessage.trim() || !isConnected}
-              className="bg-perspective-400 hover:bg-perspective-500 text-white"
+              className="bg-perspective-400 hover:bg-perspective-500 text-white px-2 py-1 sm:px-3 sm:py-2"
               size="sm"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>
           </div>
         </div>

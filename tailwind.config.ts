@@ -19,6 +19,9 @@ export default {
       },
     },
     extend: {
+      screens: {
+        'xs': '375px', // iPhone SE size
+      },
       fontFamily: {
         mono: ["'Roboto Mono'", "monospace"],
         roboto: ["'Roboto Mono'", "monospace"], // Ensure this maps to the same font

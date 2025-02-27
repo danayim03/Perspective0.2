@@ -60,16 +60,70 @@
   }
 
   * {
-    @apply border-gray-200;
+    @apply border-gray-200 box-border;
   }
   
   body {
-    @apply text-foreground antialiased font-mono;
+    @apply text-foreground antialiased font-mono m-0 p-0 w-full min-h-screen;
     background-color: hsl(var(--background));
   }
   
   html {
     font-family: 'Roboto Mono', monospace;
+    @apply scroll-smooth;
+  }
+}
+
+/* Responsive containers */
+.container {
+  @apply w-full mx-auto box-border;
+}
+
+/* iPhone SE (smallest screen) */
+@media screen and (max-width: 375px) {
+  .container {
+    @apply px-3 py-2;
+  }
+  
+  .responsive-buttons {
+    @apply flex-col gap-2;
+  }
+  
+  .responsive-text {
+    @apply text-sm;
+  }
+  
+  .responsive-heading {
+    @apply text-xl;
+  }
+}
+
+/* iPhone 12/13/14 */
+@media screen and (max-width: 390px) {
+  .container {
+    @apply px-4 py-3;
+  }
+}
+
+/* iPhone Pro Max models */
+@media screen and (max-width: 430px) {
+  .container {
+    @apply px-5 py-4;
+  }
+}
+
+/* Improve button responsiveness */
+@media screen and (max-width: 640px) {
+  .responsive-button-group {
+    @apply flex-col w-full gap-2;
+  }
+  
+  .responsive-grid {
+    @apply grid-cols-1;
+  }
+  
+  .responsive-width {
+    @apply w-full max-w-full;
   }
 }
 

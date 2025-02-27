@@ -20,18 +20,18 @@ export const MatchingScreen = ({ role, ws, user }: MatchingScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center pt-16 font-mono">
-      <div className="text-center space-y-8 max-w-xl">
-        <h2 className="text-3xl font-medium text-gray-900">
+    <div className="min-h-screen flex items-center justify-center pt-6 sm:pt-10 md:pt-16 font-mono px-4">
+      <div className="text-center space-y-6 sm:space-y-8 max-w-xl">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-medium text-gray-900 leading-tight">
           {messages[role].title}
         </h2>
         
         <div className="flex justify-center">
-          <div className="w-24 h-1 bg-perspective-300 rounded-full animate-pulse-soft" />
+          <div className="w-16 sm:w-24 h-1 bg-perspective-300 rounded-full animate-pulse-soft" />
         </div>
         
         <button 
-          className="mt-8 text-gray-500 hover:text-gray-800 transition-colors"
+          className="mt-6 sm:mt-8 text-sm sm:text-base text-gray-500 hover:text-gray-800 transition-colors"
           onClick={() => window.location.reload()}
         >
           ← Go Back
