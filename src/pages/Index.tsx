@@ -104,7 +104,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen pt-16">
+    <div className="min-h-screen pt-12 sm:pt-16">
       {state === "welcome" && <WelcomeScreen onComplete={handleWelcomeComplete} />}
       {state === "matching" && user && (
         <MatchingScreen
