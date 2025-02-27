@@ -114,7 +114,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     <div className="text-center space-y-6">
       <h1 className="text-2xl font-medium">
         {role === "getter" 
-          ? `Whose perspective would you like to gain today, ${nickname}? 🤔`
+          ? `Let me find the correct perspective for you, ${nickname}. Tell me about your crush: 💘`
           : `Tell us about yourself, ${nickname} 📝`
         }
       </h1>
@@ -181,7 +181,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
       
       {role === "getter" && gender && orientation && (
         <div>
-          <h2 className="text-xl font-medium mt-8 mb-4">And your crush is: 💘</h2>
+          <h2 className="text-xl font-medium mt-8 mb-4">Your crush is:</h2>
           
           <div className="space-y-4 max-w-md mx-auto">
             <div className="flex justify-center gap-4">
