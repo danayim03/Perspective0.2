@@ -1,5 +1,5 @@
 
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, useEffect } from "react";
 import { Gender, Orientation, Role, User } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +24,57 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [targetOrientation, setTargetOrientation] = useState<Orientation | "">("");
   const [step, setStep] = useState(1);
   const [nickname, setNickname] = useState("");
+  
+  // States for typing animation
+  const firstLine = "Curious about how your crush might think? 💭";
+  const secondLine = "Get anonymous advice from someone who matches your crush's gender and sexuality... 🔍";
+  const [displayedFirstLine, setDisplayedFirstLine] = useState("");
+  const [displayedSecondLine, setDisplayedSecondLine] = useState("");
+  const [typingComplete, setTypingComplete] = useState(false);
+  
+  // Typing animation effect
+  useEffect(() => {
+    // Check if animation has been played before using localStorage
+    const hasAnimationPlayed = localStorage.getItem('typingAnimationPlayed');
+    
+    if (hasAnimationPlayed) {
+      // If animation has played before, just show the full text
+      setDisplayedFirstLine(firstLine);
+      setDisplayedSecondLine(secondLine);
+      setTypingComplete(true);
+      return;
+    }
+    
+    // Type the first line
+    let currentIndexFirst = 0;
+    const intervalIdFirst = setInterval(() => {
+      if (currentIndexFirst <= firstLine.length) {
+        setDisplayedFirstLine(firstLine.slice(0, currentIndexFirst));
+        currentIndexFirst++;
+      } else {
+        clearInterval(intervalIdFirst);
+        
+        // Start typing the second line after the first one is done
+        let currentIndexSecond = 0;
+        const intervalIdSecond = setInterval(() => {
+          if (currentIndexSecond <= secondLine.length) {
+            setDisplayedSecondLine(secondLine.slice(0, currentIndexSecond));
+            currentIndexSecond++;
+          } else {
+            clearInterval(intervalIdSecond);
+            setTypingComplete(true);
+            // Mark animation as played in localStorage so it doesn't repeat
+            localStorage.setItem('typingAnimationPlayed', 'true');
+          }
+        }, 30); // Typing speed for second line
+      }
+    }, 30); // Typing speed for first line
+    
+    // Cleanup function
+    return () => {
+      clearInterval(intervalIdFirst);
+    };
+  }, []);
 
   const handleSubmit = () => {
     if (!role || !gender || !orientation) return;
@@ -52,11 +103,11 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     <div className="text-center space-y-8">
       <div>
         <h1 className="text-4xl font-medium mb-2">Perspective ✨</h1>
-        <p className="text-gray-600">
-          Curious about how your crush might think? 💭
+        <p className="text-gray-600 h-6">
+          {displayedFirstLine}
         </p>
-        <p className="text-gray-600">
-          Get anonymous advice from someone who matches your crush's gender and sexuality... 🔍
+        <p className="text-gray-600 h-6 mt-2">
+          {displayedSecondLine}
         </p>
       </div>
 
