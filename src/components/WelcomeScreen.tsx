@@ -26,10 +26,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [nickname, setNickname] = useState("");
   
   // States for typing animation
-  const firstLine = "Curious about how your crush might think? 💭";
-  const secondLine = "Get anonymous advice from someone who matches your crush's gender and sexuality... 🔍";
+  const firstLine = "Start chatting anonymously with strangers...";
   const [displayedFirstLine, setDisplayedFirstLine] = useState("");
-  const [displayedSecondLine, setDisplayedSecondLine] = useState("");
   const [typingComplete, setTypingComplete] = useState(false);
   
   // Typing animation effect
@@ -40,7 +38,6 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     if (hasAnimationPlayed) {
       // If animation has played before, just show the full text
       setDisplayedFirstLine(firstLine);
-      setDisplayedSecondLine(secondLine);
       setTypingComplete(true);
       return;
     }
@@ -53,20 +50,6 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         currentIndexFirst++;
       } else {
         clearInterval(intervalIdFirst);
-        
-        // Start typing the second line after the first one is done
-        let currentIndexSecond = 0;
-        const intervalIdSecond = setInterval(() => {
-          if (currentIndexSecond <= secondLine.length) {
-            setDisplayedSecondLine(secondLine.slice(0, currentIndexSecond));
-            currentIndexSecond++;
-          } else {
-            clearInterval(intervalIdSecond);
-            setTypingComplete(true);
-            // Mark animation as played in localStorage so it doesn't repeat
-            localStorage.setItem('typingAnimationPlayed', 'true');
-          }
-        }, 30); // Typing speed for second line
       }
     }, 30); // Typing speed for first line
     
@@ -100,20 +83,17 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   };
 
   const renderStep1 = () => (
-    <div className="text-center space-y-8">
+    <div className="text-center space-y-14">
       <div>
-        <h1 className="text-4xl font-medium mb-2">Perspective ✨</h1>
+        <h1 className="text-4xl font-medium mb-4">Perspective 🍵</h1>
         <p className="text-gray-600 h-6">
           {displayedFirstLine}
-        </p>
-        <p className="text-gray-600 h-6 mt-2">
-          {displayedSecondLine}
         </p>
       </div>
 
       <div className="space-y-3">
         <Input 
-          placeholder="Enter a nickname to begin chatting... 😊" 
+          placeholder="Enter a nickname"
           className="max-w-md mx-auto rounded-full bg-perspective-100 border-0 py-6 px-8 text-center"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
@@ -138,7 +118,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
 
   const renderStep2 = () => (
     <div className="text-center space-y-8">
-      <h1 className="text-3xl font-medium">Glad you're here, {nickname}! 👋</h1>
+      <h1 className="text-3xl font-medium">Glad you're here, {nickname}!</h1>
       <p className="text-lg">You are here to:</p>
       
       <div className="flex justify-center gap-4">
