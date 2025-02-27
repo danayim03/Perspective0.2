@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, KeyboardEvent } from "react";
 import { Gender, Orientation, Role, User } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,6 +42,12 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     onComplete(userData);
   };
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement | HTMLButtonElement>, action: () => void) => {
+    if (e.key === 'Enter') {
+      action();
+    }
+  };
+
   const renderStep1 = () => (
     <div className="text-center space-y-8">
       <div>
@@ -60,12 +66,18 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           className="max-w-md mx-auto rounded-full bg-perspective-100 border-0 py-6 px-8 text-center"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && nickname.trim()) {
+              setStep(2);
+            }
+          }}
         />
         
         <Button 
           onClick={() => setStep(2)} 
           disabled={!nickname.trim()}
           className="rounded-full mx-auto bg-perspective-300 hover:bg-perspective-400 text-gray-800 font-normal"
+          onKeyDown={(e) => handleKeyDown(e, () => setStep(2))}
         >
           Continue 👉
         </Button>
@@ -85,6 +97,10 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             setStep(3);
           }}
           className="rounded-full bg-perspective-300 hover:bg-perspective-400 text-gray-800 font-normal py-6 px-8"
+          onKeyDown={(e) => handleKeyDown(e, () => {
+            setRole("getter");
+            setStep(3);
+          })}
         >
           Get a perspective 💡
         </Button>
@@ -95,6 +111,10 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             setStep(3);
           }}
           className="rounded-full bg-perspective-300 hover:bg-perspective-400 text-gray-800 font-normal py-6 px-8"
+          onKeyDown={(e) => handleKeyDown(e, () => {
+            setRole("giver");
+            setStep(3);
+          })}
         >
           Give a perspective 🍵👀
         </Button>
@@ -104,6 +124,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         onClick={() => setStep(1)} 
         variant="ghost" 
         className="text-gray-500 hover:text-gray-800"
+        onKeyDown={(e) => handleKeyDown(e, () => setStep(1))}
       >
         ← Go Back
       </Button>
@@ -114,18 +135,20 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     <div className="text-center space-y-6">
       <h1 className="text-2xl font-medium">
         {role === "getter" 
-          ? `Let me find the correct perspective for you, ${nickname}. Tell me about your crush: 💘`
+          ? `Let me find the correct perspective for you, ${nickname}. Tell me about yourself and your crush: 💘`
           : `Tell us about yourself, ${nickname} 📝`
         }
       </h1>
       
       <div className="space-y-4 max-w-md mx-auto">
+        <h3 className="text-lg font-medium">I am:</h3>
         <div className="flex justify-center gap-4">
           <Button 
             onClick={() => setGender("male")}
             className={`rounded-full px-6 ${gender === "male" 
               ? "bg-perspective-300 text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+            onKeyDown={(e) => handleKeyDown(e, () => setGender("male"))}
           >
             Male 👨
           </Button>
@@ -135,6 +158,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             className={`rounded-full px-6 ${gender === "female" 
               ? "bg-perspective-300 text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+            onKeyDown={(e) => handleKeyDown(e, () => setGender("female"))}
           >
             Female 👩
           </Button>
@@ -144,6 +168,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             className={`rounded-full px-6 ${gender === "non-binary" 
               ? "bg-perspective-300 text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+            onKeyDown={(e) => handleKeyDown(e, () => setGender("non-binary"))}
           >
             Non-binary 🌈
           </Button>
@@ -155,6 +180,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             className={`rounded-full px-6 ${orientation === "straight" 
               ? "bg-perspective-300 text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+            onKeyDown={(e) => handleKeyDown(e, () => setOrientation("straight"))}
           >
             Straight 💑
           </Button>
@@ -164,6 +190,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             className={`rounded-full px-6 ${orientation === "gay" 
               ? "bg-perspective-300 text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+            onKeyDown={(e) => handleKeyDown(e, () => setOrientation("gay"))}
           >
             Gay 🏳️‍🌈
           </Button>
@@ -173,74 +200,78 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             className={`rounded-full px-6 ${orientation === "bisexual" 
               ? "bg-perspective-300 text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+            onKeyDown={(e) => handleKeyDown(e, () => setOrientation("bisexual"))}
           >
             Bisexual 💖
           </Button>
         </div>
       </div>
       
-      {role === "getter" && gender && orientation && (
-        <div>
-          <h2 className="text-xl font-medium mt-8 mb-4">Your crush is:</h2>
-          
-          <div className="space-y-4 max-w-md mx-auto">
-            <div className="flex justify-center gap-4">
-              <Button 
-                onClick={() => setTargetGender("male")}
-                className={`rounded-full px-6 ${targetGender === "male" 
-                  ? "bg-perspective-300 text-gray-800" 
-                  : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
-              >
-                Male 👨
-              </Button>
-              
-              <Button 
-                onClick={() => setTargetGender("female")}
-                className={`rounded-full px-6 ${targetGender === "female" 
-                  ? "bg-perspective-300 text-gray-800" 
-                  : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
-              >
-                Female 👩
-              </Button>
-              
-              <Button 
-                onClick={() => setTargetGender("non-binary")}
-                className={`rounded-full px-6 ${targetGender === "non-binary" 
-                  ? "bg-perspective-300 text-gray-800" 
-                  : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
-              >
-                Non-binary 🌈
-              </Button>
-            </div>
+      {role === "getter" && (
+        <div className="space-y-4 max-w-md mx-auto mt-8">
+          <h3 className="text-lg font-medium">My crush is:</h3>
+          <div className="flex justify-center gap-4">
+            <Button 
+              onClick={() => setTargetGender("male")}
+              className={`rounded-full px-6 ${targetGender === "male" 
+                ? "bg-perspective-300 text-gray-800" 
+                : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("male"))}
+            >
+              Male 👨
+            </Button>
             
-            <div className="flex justify-center gap-4">
-              <Button 
-                onClick={() => setTargetOrientation("straight")}
-                className={`rounded-full px-6 ${targetOrientation === "straight" 
-                  ? "bg-perspective-300 text-gray-800" 
-                  : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
-              >
-                Straight 💑
-              </Button>
-              
-              <Button 
-                onClick={() => setTargetOrientation("gay")}
-                className={`rounded-full px-6 ${targetOrientation === "gay" 
-                  ? "bg-perspective-300 text-gray-800" 
-                  : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
-              >
-                Gay 🏳️‍🌈
-              </Button>
-              
-              <Button 
-                onClick={() => setTargetOrientation("bisexual")}
-                className={`rounded-full px-6 ${targetOrientation === "bisexual" 
-                  ? "bg-perspective-300 text-gray-800" 
-                  : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
-              >
-                Bisexual 💖
-              </Button>
-            </div>
+            <Button 
+              onClick={() => setTargetGender("female")}
+              className={`rounded-full px-6 ${targetGender === "female" 
+                ? "bg-perspective-300 text-gray-800" 
+                : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("female"))}
+            >
+              Female 👩
+            </Button>
+            
+            <Button 
+              onClick={() => setTargetGender("non-binary")}
+              className={`rounded-full px-6 ${targetGender === "non-binary" 
+                ? "bg-perspective-300 text-gray-800" 
+                : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("non-binary"))}
+            >
+              Non-binary 🌈
+            </Button>
+          </div>
+          
+          <div className="flex justify-center gap-4">
+            <Button 
+              onClick={() => setTargetOrientation("straight")}
+              className={`rounded-full px-6 ${targetOrientation === "straight" 
+                ? "bg-perspective-300 text-gray-800" 
+                : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("straight"))}
+            >
+              Straight 💑
+            </Button>
+            
+            <Button 
+              onClick={() => setTargetOrientation("gay")}
+              className={`rounded-full px-6 ${targetOrientation === "gay" 
+                ? "bg-perspective-300 text-gray-800" 
+                : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("gay"))}
+            >
+              Gay 🏳️‍🌈
+            </Button>
+            
+            <Button 
+              onClick={() => setTargetOrientation("bisexual")}
+              className={`rounded-full px-6 ${targetOrientation === "bisexual" 
+                ? "bg-perspective-300 text-gray-800" 
+                : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("bisexual"))}
+            >
+              Bisexual 💖
+            </Button>
           </div>
         </div>
       )}
@@ -253,6 +284,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             (role === "getter" && (!targetGender || !targetOrientation))
           }
           className="rounded-full bg-perspective-400 hover:bg-perspective-500 text-white font-medium py-2 px-8"
+          onKeyDown={(e) => handleKeyDown(e, () => handleSubmit())}
         >
           Proceed! 🚀
         </Button>
@@ -262,6 +294,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             onClick={() => setStep(2)} 
             variant="ghost" 
             className="text-gray-500 hover:text-gray-800"
+            onKeyDown={(e) => handleKeyDown(e, () => setStep(2))}
           >
             ← Go Back
           </Button>
