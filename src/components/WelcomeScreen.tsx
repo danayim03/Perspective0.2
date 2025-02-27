@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 interface WelcomeScreenProps {
   onComplete: (user: Omit<User, "id">) => void;
@@ -21,6 +22,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [orientation, setOrientation] = useState<Orientation | "">("");
   const [targetGender, setTargetGender] = useState<Gender | "">("");
   const [targetOrientation, setTargetOrientation] = useState<Orientation | "">("");
+  const [step, setStep] = useState(1);
+  const [nickname, setNickname] = useState("");
 
   const handleSubmit = () => {
     if (!role || !gender || !orientation) return;
@@ -39,128 +42,247 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     onComplete(userData);
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-perspective-100 to-perspective-200 p-4 font-mono">
-      <Card className="w-full max-w-md p-8 backdrop-blur-lg bg-white/90 rounded-2xl shadow-xl animate-fade-in">
-        <div className="space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-semibold text-gray-900">Perspective</h1>
-            <p className="text-gray-600">Share your perspective or get advice</p>
-          </div>
+  const renderStep1 = () => (
+    <div className="text-center space-y-8">
+      <div>
+        <h1 className="text-4xl font-medium mb-2">Perspective</h1>
+        <p className="text-gray-600">
+          Curious about how your crush might think?
+        </p>
+        <p className="text-gray-600">
+          Get anonymous advice from someone who matches your crush's gender and sexuality from...
+        </p>
+      </div>
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                I want to...
-              </label>
-              <Select onValueChange={(value) => setRole(value as Role)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choose your role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="getter">
-                    💡 Get perspective about my situation
-                  </SelectItem>
-                  <SelectItem value="giver">
-                    🍵 Give perspective to others
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+      <div className="space-y-3">
+        <Input 
+          placeholder="Enter a nickname to begin chatting..." 
+          className="max-w-md mx-auto rounded-full bg-perspective-100 border-0 py-6 px-8 text-center"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+        />
+        
+        <Button 
+          onClick={() => setStep(2)} 
+          disabled={!nickname.trim()}
+          className="rounded-full mx-auto bg-perspective-300 hover:bg-perspective-400 text-gray-800 font-normal"
+        >
+          Continue
+        </Button>
+      </div>
+    </div>
+  );
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                I identify as
-              </label>
-              <Select onValueChange={(value) => setGender(value as Gender)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select your gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="non-binary">Non-binary</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+  const renderStep2 = () => (
+    <div className="text-center space-y-8">
+      <h1 className="text-3xl font-medium">Glad you're here, {nickname}!</h1>
+      <p className="text-lg">You are here to:</p>
+      
+      <div className="flex justify-center gap-4">
+        <Button 
+          onClick={() => {
+            setRole("getter");
+            setStep(3);
+          }}
+          className="rounded-full bg-perspective-300 hover:bg-perspective-400 text-gray-800 font-normal py-6 px-8"
+        >
+          Get a perspective
+        </Button>
+        
+        <Button 
+          onClick={() => {
+            setRole("giver");
+            setStep(3);
+          }}
+          className="rounded-full bg-perspective-300 hover:bg-perspective-400 text-gray-800 font-normal py-6 px-8"
+        >
+          Give a perspective
+        </Button>
+      </div>
+      
+      <Button 
+        onClick={() => setStep(1)} 
+        variant="ghost" 
+        className="text-gray-500 hover:text-gray-800"
+      >
+        Go Back
+      </Button>
+    </div>
+  );
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                My orientation is
-              </label>
-              <Select
-                onValueChange={(value) => setOrientation(value as Orientation)}
+  const renderStep3 = () => (
+    <div className="text-center space-y-6">
+      <h1 className="text-2xl font-medium">
+        {role === "getter" 
+          ? "Whose perspective would you like to gain today, " + nickname + "?"
+          : "Tell us about yourself, " + nickname
+        }
+      </h1>
+      
+      <div className="space-y-4 max-w-md mx-auto">
+        <div className="flex justify-center gap-4">
+          <Button 
+            onClick={() => setGender("male")}
+            className={`rounded-full px-6 ${gender === "male" 
+              ? "bg-perspective-300 text-gray-800" 
+              : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+          >
+            Male
+          </Button>
+          
+          <Button 
+            onClick={() => setGender("female")}
+            className={`rounded-full px-6 ${gender === "female" 
+              ? "bg-perspective-300 text-gray-800" 
+              : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+          >
+            Female
+          </Button>
+          
+          <Button 
+            onClick={() => setGender("non-binary")}
+            className={`rounded-full px-6 ${gender === "non-binary" 
+              ? "bg-perspective-300 text-gray-800" 
+              : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+          >
+            Non-binary
+          </Button>
+        </div>
+        
+        <div className="flex justify-center gap-4">
+          <Button 
+            onClick={() => setOrientation("straight")}
+            className={`rounded-full px-6 ${orientation === "straight" 
+              ? "bg-perspective-300 text-gray-800" 
+              : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+          >
+            Straight
+          </Button>
+          
+          <Button 
+            onClick={() => setOrientation("gay")}
+            className={`rounded-full px-6 ${orientation === "gay" 
+              ? "bg-perspective-300 text-gray-800" 
+              : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+          >
+            Gay
+          </Button>
+          
+          <Button 
+            onClick={() => setOrientation("bisexual")}
+            className={`rounded-full px-6 ${orientation === "bisexual" 
+              ? "bg-perspective-300 text-gray-800" 
+              : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+          >
+            Bisexual
+          </Button>
+        </div>
+      </div>
+      
+      {role === "getter" && gender && orientation && (
+        <div>
+          <h2 className="text-xl font-medium mt-8 mb-4">And your crush is:</h2>
+          
+          <div className="space-y-4 max-w-md mx-auto">
+            <div className="flex justify-center gap-4">
+              <Button 
+                onClick={() => setTargetGender("male")}
+                className={`rounded-full px-6 ${targetGender === "male" 
+                  ? "bg-perspective-300 text-gray-800" 
+                  : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
               >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select your orientation" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="straight">Straight</SelectItem>
-                  <SelectItem value="gay">Gay</SelectItem>
-                  <SelectItem value="lesbian">Lesbian</SelectItem>
-                  <SelectItem value="bisexual">Bisexual</SelectItem>
-                </SelectContent>
-              </Select>
+                Male
+              </Button>
+              
+              <Button 
+                onClick={() => setTargetGender("female")}
+                className={`rounded-full px-6 ${targetGender === "female" 
+                  ? "bg-perspective-300 text-gray-800" 
+                  : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              >
+                Female
+              </Button>
+              
+              <Button 
+                onClick={() => setTargetGender("non-binary")}
+                className={`rounded-full px-6 ${targetGender === "non-binary" 
+                  ? "bg-perspective-300 text-gray-800" 
+                  : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              >
+                Non-binary
+              </Button>
             </div>
-
-            {role === "getter" && (
-              <>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    My crush identifies as
-                  </label>
-                  <Select
-                    onValueChange={(value) => setTargetGender(value as Gender)}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select their gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="non-binary">Non-binary</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Their orientation is
-                  </label>
-                  <Select
-                    onValueChange={(value) =>
-                      setTargetOrientation(value as Orientation)
-                    }
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select their orientation" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="straight">Straight</SelectItem>
-                      <SelectItem value="gay">Gay</SelectItem>
-                      <SelectItem value="lesbian">Lesbian</SelectItem>
-                      <SelectItem value="bisexual">Bisexual</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </>
-            )}
-
-            <Button
-              onClick={handleSubmit}
-              disabled={
-                !role ||
-                !gender ||
-                !orientation ||
-                (role === "getter" && (!targetGender || !targetOrientation))
-              }
-              className="w-full bg-perspective-500 hover:bg-perspective-600 text-white transition-all duration-300"
-            >
-              {role === "getter" ? "Get Perspective" : "Give Perspective"}
-            </Button>
+            
+            <div className="flex justify-center gap-4">
+              <Button 
+                onClick={() => setTargetOrientation("straight")}
+                className={`rounded-full px-6 ${targetOrientation === "straight" 
+                  ? "bg-perspective-300 text-gray-800" 
+                  : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              >
+                Straight
+              </Button>
+              
+              <Button 
+                onClick={() => setTargetOrientation("gay")}
+                className={`rounded-full px-6 ${targetOrientation === "gay" 
+                  ? "bg-perspective-300 text-gray-800" 
+                  : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              >
+                Gay
+              </Button>
+              
+              <Button 
+                onClick={() => setTargetOrientation("bisexual")}
+                className={`rounded-full px-6 ${targetOrientation === "bisexual" 
+                  ? "bg-perspective-300 text-gray-800" 
+                  : "bg-gray-100 text-gray-800 hover:bg-perspective-200"}`}
+              >
+                Bisexual
+              </Button>
+            </div>
           </div>
         </div>
-      </Card>
+      )}
+      
+      <div className="pt-6">
+        <Button 
+          onClick={handleSubmit} 
+          disabled={
+            !gender || !orientation || 
+            (role === "getter" && (!targetGender || !targetOrientation))
+          }
+          className="rounded-full bg-perspective-400 hover:bg-perspective-500 text-white font-medium py-2 px-8"
+        >
+          Proceed!
+        </Button>
+        
+        <div className="mt-4">
+          <Button 
+            onClick={() => setStep(2)} 
+            variant="ghost" 
+            className="text-gray-500 hover:text-gray-800"
+          >
+            Go Back
+          </Button>
+        </div>
+        
+        <div className="mt-8 text-xs text-gray-500 max-w-md mx-auto">
+          *We're working to include more genders and sexualities, but with our small (and growing!) community, 
+          we're starting simple—stay tuned as we grow! If you don't see your gender, sexuality, or your crush's 
+          represented, we'd love to hear from you—please email us and help us make Perspective even better!
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen flex items-center justify-center pt-16 p-4 font-roboto">
+      <div className="w-full max-w-4xl animate-fade-in">
+        {step === 1 && renderStep1()}
+        {step === 2 && renderStep2()}
+        {step === 3 && renderStep3()}
+      </div>
     </div>
   );
 };
