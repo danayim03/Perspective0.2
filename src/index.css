@@ -1,5 +1,31 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@font-face {
+  font-family: 'Roboto Mono';
+  src: url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400;500;700&display=swap');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  src: url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400;500;700&display=swap');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  src: url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400;500;700&display=swap');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  src: url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400;500;700&display=swap');
+  font-weight: 700;
+  font-style: normal;
+}
 
 @tailwind base;
 @tailwind components;
@@ -35,7 +61,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased font-roboto;
+    @apply bg-background text-foreground antialiased font-mono;
   }
 }
 
