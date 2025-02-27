@@ -24,6 +24,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [targetOrientation, setTargetOrientation] = useState<Orientation | "">("");
   const [step, setStep] = useState(1);
   const [nickname, setNickname] = useState("");
+  const [nicknameInputFocused, setNicknameInputFocused] = useState(false);
   
   // States for typing animation
   const firstLine = "Start chatting anonymously with strangers...";
@@ -96,10 +97,12 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
 
       <div className="space-y-3">
         <Input 
-          placeholder="Enter a nickname"
+          placeholder={nicknameInputFocused ? "" : "Enter a nickname"}
           className="max-w-md mx-auto rounded-full bg-perspective-100 border-0 py-6 px-8 text-center"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
+          onFocus={() => setNicknameInputFocused(true)}
+          onBlur={() => setNicknameInputFocused(false)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && nickname.trim()) {
               setStep(2);
