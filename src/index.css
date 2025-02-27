@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,6 +8,7 @@
   src: url('/fonts/RobotoMono-Thin.ttf') format('truetype');
   font-weight: 100;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -14,6 +16,7 @@
   src: url('/fonts/RobotoMono-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -21,6 +24,7 @@
   src: url('/fonts/RobotoMono-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -28,6 +32,7 @@
   src: url('/fonts/RobotoMono-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
 
 @layer base {
@@ -61,6 +66,10 @@
   }
   body {
     @apply bg-background text-foreground antialiased font-mono;
+  }
+  
+  html {
+    font-family: 'Roboto Mono', monospace;
   }
 }
 

@@ -20,7 +20,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        mono: ["Roboto Mono", "monospace"],
+        mono: ["'Roboto Mono'", "monospace"],
         roboto: ["Roboto", "sans-serif"],
       },
       colors: {
