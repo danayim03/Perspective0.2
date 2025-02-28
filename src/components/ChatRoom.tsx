@@ -258,7 +258,17 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       // Send rematch request to inform the other user
       ws.send(JSON.stringify({ type: 'rematchRequest' }));
       
-      // Immediately transition to matching screen to find a new match
+      // Add system message about requesting rematch
+      const systemMessage: Message = {
+        id: Date.now().toString(),
+        senderId: "system",
+        content: "You've requested to find a new match. Looking for new matches...",
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, systemMessage]);
+      
+      // Transition to matching screen to find a new match
+      // The existing websocket connection will be maintained
       onRematch();
     }
   };
