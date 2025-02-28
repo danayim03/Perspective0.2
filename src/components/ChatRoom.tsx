@@ -246,10 +246,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       })
     );
     
-    toast({
-      title: "Color Changed",
-      description: `Chat bubble color set to ${color.name}`,
-    });
+    // Toast notification removed
   };
 
   // Typing indicator component
