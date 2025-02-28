@@ -1,3 +1,4 @@
+
 import { WebSocketServer } from 'ws';
 
 const port = process.env.PORT || 8080;
@@ -9,6 +10,9 @@ const userConnections = new Map(); // userId -> ws
 
 // Store active matches
 const activeMatches = new Map(); // ws -> matched ws
+
+// Store rematch requests
+const rematchRequests = new Map(); // ws -> matched ws (who requested rematch)
 
 wss.on('connection', (ws) => {
   console.log('New client connected');
@@ -129,6 +133,57 @@ wss.on('connection', (ws) => {
           activeMatches.delete(matchedWs);
         }
         activeMatches.delete(ws);
+        
+        // Also clear any rematch requests
+        rematchRequests.delete(ws);
+        if (matchedWs) {
+          rematchRequests.delete(matchedWs);
+        }
+      } else if (data.type === 'rematchRequest') {
+        const matchedWs = activeMatches.get(ws);
+        
+        if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
+          // Store the rematch request
+          rematchRequests.set(matchedWs, ws);
+          
+          // Notify the matched user about the rematch request
+          matchedWs.send(JSON.stringify({ 
+            type: 'rematchRequested',
+            message: "Your chat partner wants to find a new match. Would you like to find a new match too?"
+          }));
+        }
+      } else if (data.type === 'acceptRematch') {
+        const requesterWs = rematchRequests.get(ws);
+        
+        // Clear the rematch request
+        rematchRequests.delete(ws);
+        
+        // Only proceed if there's a valid requester still connected
+        if (requesterWs && requesterWs.readyState === WebSocket.OPEN) {
+          // Remove both users from active matches
+          activeMatches.delete(ws);
+          activeMatches.delete(requesterWs);
+          
+          // Notify the requester that the rematch was accepted
+          requesterWs.send(JSON.stringify({ 
+            type: 'rematchAccepted',
+            message: "Your chat partner also wants to find a new match!"
+          }));
+          
+          // Both will now be in "waiting" state looking for new matches
+        }
+      } else if (data.type === 'declineRematch') {
+        // Clear the rematch request
+        rematchRequests.delete(ws);
+        
+        const requesterWs = rematchRequests.get(ws);
+        if (requesterWs && requesterWs.readyState === WebSocket.OPEN) {
+          // Notify the requester that the rematch was declined
+          requesterWs.send(JSON.stringify({ 
+            type: 'rematchDeclined',
+            message: "Your chat partner doesn't want to find a new match at this time."
+          }));
+        }
       }
     } catch (error) {
       console.error('Error processing message:', error);
@@ -154,6 +209,9 @@ wss.on('connection', (ws) => {
         break;
       }
     }
+    
+    // Clean up rematch requests
+    rematchRequests.delete(ws);
   });
 
   ws.on('error', (error) => {
