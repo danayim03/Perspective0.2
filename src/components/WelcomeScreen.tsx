@@ -172,13 +172,13 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
     <div className="text-center space-y-6">
       <h1 className="text-2xl font-medium">
         {role === "getter" 
-          ? `Let me find the correct perspective for you, ${nickname}. Tell me about yourself and your crush: 💘`
+          ? `Let me find a perspective for you...`
           : `Tell us about yourself, ${nickname} 📝`
         }
       </h1>
       
       <div className="space-y-4 max-w-md mx-auto">
-        <h3 className="text-lg font-medium">I am:</h3>
+        <h3 className="text-lg font-medium">{nickname} is:</h3>
         <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
           <Button 
             onClick={() => setGender("male")}
@@ -187,7 +187,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setGender("male"))}
           >
-            Male 👨
+            Male
           </Button>
           
           <Button 
@@ -197,7 +197,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setGender("female"))}
           >
-            Female 👩
+            Female
           </Button>
           
           <Button 
@@ -246,7 +246,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
       
       {role === "getter" && (
         <div className="space-y-4 max-w-md mx-auto mt-8">
-          <h3 className="text-lg font-medium">My crush is:</h3>
+          <h3 className="text-lg font-medium">Find me a:</h3>
           <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
             <Button 
               onClick={() => setTargetGender("male")}
@@ -255,7 +255,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("male"))}
             >
-              Male 👨
+              Male
             </Button>
             
             <Button 
@@ -265,7 +265,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("female"))}
             >
-              Female 👩
+              Female
             </Button>
             
             <Button 
