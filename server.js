@@ -1,3 +1,4 @@
+
 import { WebSocketServer } from 'ws';
 
 const port = process.env.PORT || 8080;
@@ -107,6 +108,14 @@ wss.on('connection', (ws) => {
           matchedWs.send(JSON.stringify({
             type: 'chat',
             message: data.message
+          }));
+        }
+      } else if (data.type === 'typing') {
+        // Handle typing signal
+        const matchedWs = activeMatches.get(ws);
+        if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
+          matchedWs.send(JSON.stringify({
+            type: 'typing'
           }));
         }
       } else if (data.type === 'endChat') {
