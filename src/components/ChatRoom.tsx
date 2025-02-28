@@ -56,6 +56,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const [selectedBubbleColor, setSelectedBubbleColor] = useState(defaultBubbleColor);
   const [showRematchDialog, setShowRematchDialog] = useState(false);
   const [chatEnded, setChatEnded] = useState(false);
+  const [isRematching, setIsRematching] = useState(false);
 
   // Scroll to bottom of messages
   const scrollToBottom = () => {
@@ -125,7 +126,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
             timestamp: new Date(),
           };
           setMessages(prev => [...prev, systemMessage]);
-          setIsConnected(false);
           setChatEnded(true);
           toast({
             title: "Chat ended",
@@ -164,7 +164,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       console.log("WebSocket connection closed");
       setIsConnected(false);
       // Only show connection lost message if it wasn't a normal chat ending
-      if (!isNormalChatEnd && !chatEnded) {
+      if (!isNormalChatEnd && !chatEnded && !isRematching) {
         toast({
           title: "Connection lost",
           description: "The chat connection was closed",
@@ -176,7 +176,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     ws.onerror = (error) => {
       console.error("WebSocket error:", error);
       setIsConnected(false);
-      if (!isNormalChatEnd && !chatEnded) {
+      if (!isNormalChatEnd && !chatEnded && !isRematching) {
         toast({
           title: "Connection error",
           description: "There was an error with the chat connection",
@@ -191,7 +191,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
         clearTimeout(typingTimeout);
       }
     };
-  }, [ws, onGoBack, toast, isNormalChatEnd, typingTimeout, chatEnded]);
+  }, [ws, onGoBack, toast, isNormalChatEnd, typingTimeout, chatEnded, isRematching]);
 
   // Send typing signal when user is typing
   const handleTyping = () => {
@@ -255,6 +255,9 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
 
   const handleRematchClick = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
+      // Set rematching status to prevent connection loss messages
+      setIsRematching(true);
+      
       // Send rematch request to inform the other user
       ws.send(JSON.stringify({ type: 'rematchRequest' }));
       
@@ -273,6 +276,9 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   };
   
   const handleRematchDialogConfirm = () => {
+    // Set rematching status to prevent connection loss messages
+    setIsRematching(true);
+    
     // Close the dialog
     setShowRematchDialog(false);
     
@@ -368,7 +374,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           </div>
 
           <div className="flex-1 p-2 sm:p-3 md:p-4 overflow-y-auto space-y-2 sm:space-y-3 md:space-y-4">
-            {!isConnected && !chatEnded && (
+            {!isConnected && !chatEnded && !isRematching && (
               <div className="h-full flex items-center justify-center text-red-500 text-xs sm:text-sm md:text-base">
                 Connection lost. Please try again.
               </div>
@@ -378,7 +384,12 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 This chat has ended. You can no longer send messages.
               </div>
             )}
-            {isConnected && messages.length === 0 && !chatEnded ? (
+            {isRematching && (
+              <div className="h-full flex items-center justify-center text-blue-500 text-xs sm:text-sm md:text-base">
+                Finding you a new match...
+              </div>
+            )}
+            {isConnected && messages.length === 0 && !chatEnded && !isRematching ? (
               <div className="h-full flex items-center justify-center text-gray-500 text-xs sm:text-sm md:text-base">
                 No messages yet. Start the conversation!
               </div>
@@ -410,7 +421,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 ))}
                 
                 {/* Show typing indicator when the other user is typing */}
-                {isTyping && !chatEnded && <TypingIndicator />}
+                {isTyping && !chatEnded && !isRematching && <TypingIndicator />}
                 
                 {/* Invisible div for scrolling to bottom */}
                 <div ref={messagesEndRef} />
@@ -426,17 +437,19 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 placeholder={
                   chatEnded 
                     ? "This chat has ended" 
-                    : isConnected 
-                      ? "Type a message..." 
-                      : "Connecting..."
+                    : isRematching
+                      ? "Finding a new match..."
+                      : isConnected 
+                        ? "Type a message..." 
+                        : "Connecting..."
                 }
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 className="flex-1 bg-white/50 text-xs sm:text-sm h-8 sm:h-10"
-                disabled={!isConnected || chatEnded}
+                disabled={!isConnected || chatEnded || isRematching}
               />
               <Button
                 onClick={handleSend}
-                disabled={!newMessage.trim() || !isConnected || chatEnded}
+                disabled={!newMessage.trim() || !isConnected || chatEnded || isRematching}
                 className="bg-gray-300 hover:bg-gray-400 text-black px-2 py-1 sm:px-3 sm:py-2"
                 size="sm"
               >
