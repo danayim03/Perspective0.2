@@ -400,7 +400,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
             )}
             {chatEnded && (
               <div className="h-full flex items-center justify-center text-amber-500 text-xs sm:text-sm md:text-base">
-                This chat has ended. You can go home or find a new match.
+                This chat has ended.
               </div>
             )}
             {isRematching && (
