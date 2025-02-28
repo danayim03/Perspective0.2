@@ -33,17 +33,10 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   
   // Typing animation effect
   useEffect(() => {
-    // Check if animation has been played before using localStorage
-    const hasAnimationPlayed = localStorage.getItem('typingAnimationPlayed');
+    // Reset localStorage to ensure animation plays
+    // localStorage.removeItem('typingAnimationPlayed');
     
-    if (hasAnimationPlayed) {
-      // If animation has played before, just show the full text
-      setDisplayedFirstLine(firstLine);
-      setTypingComplete(true);
-      return;
-    }
-    
-    // Type the first line
+    // Always run the animation
     let currentIndexFirst = 0;
     const intervalIdFirst = setInterval(() => {
       if (currentIndexFirst <= firstLine.length) {
@@ -52,8 +45,6 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
       } else {
         clearInterval(intervalIdFirst);
         setTypingComplete(true);
-        // Save that animation has been played
-        localStorage.setItem('typingAnimationPlayed', 'true');
       }
     }, 30); // Typing speed for first line
     
