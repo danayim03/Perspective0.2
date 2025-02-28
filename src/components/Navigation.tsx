@@ -16,7 +16,9 @@ export const Navigation: React.FC<NavigationProps> = ({ disabled = false }) => {
         onClick={(e) => disabled && e.preventDefault()}
         className={`font-medium text-sm sm:text-base ${
           location.pathname === "/" 
-            ? "text-perspective-500" 
+            ? disabled
+              ? "text-gray-400 cursor-not-allowed"
+              : "text-perspective-500" 
             : disabled 
               ? "text-gray-400 cursor-not-allowed" 
               : "text-gray-800 hover:text-perspective-500"
@@ -29,7 +31,9 @@ export const Navigation: React.FC<NavigationProps> = ({ disabled = false }) => {
         onClick={(e) => disabled && e.preventDefault()}
         className={`font-medium text-sm sm:text-base ${
           location.pathname === "/about" 
-            ? "text-perspective-500" 
+            ? disabled
+              ? "text-gray-400 cursor-not-allowed"
+              : "text-perspective-500" 
             : disabled 
               ? "text-gray-400 cursor-not-allowed" 
               : "text-gray-800 hover:text-perspective-500"

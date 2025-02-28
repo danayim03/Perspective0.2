@@ -4,7 +4,7 @@ import { Message, Role } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Send, ArrowLeft, RefreshCw, Palette, Check } from "lucide-react";
+import { Send, Palette } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import {
@@ -304,28 +304,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     navigate('/');
   };
 
-  const handleRematchClick = () => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      // Set rematching status to prevent connection loss messages
-      setIsRematching(true);
-      
-      // Send rematch request to inform the other user
-      ws.send(JSON.stringify({ type: 'rematchRequest' }));
-      
-      // Add system message about requesting rematch
-      const systemMessage: Message = {
-        id: Date.now().toString(),
-        senderId: "system",
-        content: "You've requested to find a new match. Looking for new matches...",
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, systemMessage]);
-      
-      // Immediately move to waiting screen
-      onRematch();
-    }
-  };
-  
   const handleRematchDialogConfirm = () => {
     // Set rematching status to prevent connection loss messages
     setIsRematching(true);
@@ -382,8 +360,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
               size="sm"
               className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
             >
-              <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-              <span className="hidden xs:inline">{chatEnded ? "Home" : "End"}</span>
+              {chatEnded ? "Home" : "End Chat"}
             </Button>
             
             <div className="flex items-center gap-2">
@@ -412,17 +389,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-              
-              <Button
-                onClick={handleRematchClick}
-                variant="ghost"
-                size="sm"
-                disabled={chatEnded}
-                className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
-              >
-                <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                <span className="hidden xs:inline">Rematch</span>
-              </Button>
             </div>
           </div>
 
@@ -524,7 +490,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction onClick={handleRematchDialogConfirm} className="flex items-center gap-1 bg-perspective-400 hover:bg-perspective-500">
-              <Check className="w-4 h-4" />
               OK
             </AlertDialogAction>
           </AlertDialogFooter>
