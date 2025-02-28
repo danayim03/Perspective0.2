@@ -38,12 +38,12 @@ wss.on('connection', (ws) => {
           console.log('Looking for a match for getter:', data.user);
           
           for (const [waitingUserId, userData] of waitingUsers.entries()) {
-            if (waitingUserId === userId) continue; // Skip self
+            if (waitingUserId === userId || userData.lastMatchedUserId === userId) continue; // Skip self and last match
             
             const isMatch = 
-              userData.role === 'giver' && // Is a giver
-              userData.gender === data.user.targetGender && // Matches target gender
-              userData.orientation === data.user.targetOrientation; // Matches target orientation
+              userData.role === 'giver' &&
+              userData.gender === data.user.targetGender &&
+              userData.orientation === data.user.targetOrientation;
             
             if (isMatch) {
               const matchedWs = userConnections.get(waitingUserId);
@@ -71,11 +71,11 @@ wss.on('connection', (ws) => {
           console.log('New giver joined/reconnected, checking for waiting getters');
           
           for (const [waitingUserId, userData] of waitingUsers.entries()) {
-            if (waitingUserId === userId) continue; // Skip self
+            if (waitingUserId === userId || userData.lastMatchedUserId === userId) continue; // Skip self and last match
             
-            if (userData.role === 'getter' && // Is a getter
-                data.user.gender === userData.targetGender && // Giver matches getter's target gender
-                data.user.orientation === userData.targetOrientation) { // Giver matches getter's target orientation
+            if (userData.role === 'getter' &&
+                data.user.gender === userData.targetGender &&
+                data.user.orientation === userData.targetOrientation) {
               
               const matchedWs = userConnections.get(waitingUserId);
               if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
@@ -126,23 +126,32 @@ wss.on('connection', (ws) => {
         }
         activeMatches.delete(ws);
       } else if (data.type === 'rematchRequest') {
-        // Get the matched WebSocket
         const matchedWs = activeMatches.get(ws);
-        
+
         if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
-          // Notify the matched user that the other user wants a rematch
-          matchedWs.send(JSON.stringify({ 
-            type: 'rematchRequested'
-          }));
-          
-          console.log('Sent rematch request to matched user');
+          matchedWs.send(JSON.stringify({ type: 'rematchNotification', message: "Your opponent has clicked rematch :(" }));
+          console.log(`User ${data.user.id} requested a rematch, sending ${matchedWs} back to waiting.`);
         }
-        
-        // Clean up the match from activeMatches
+
+        // Remove both users from active matches
         if (matchedWs) {
           activeMatches.delete(matchedWs);
         }
         activeMatches.delete(ws);
+
+        // Send both users back to the waiting room while ensuring they do not get matched with each other again
+        const userId = data.user.id;
+        const opponentId = [...userConnections.entries()].find(([_, wsConn]) => wsConn === matchedWs)?.[0];
+
+        if (userId) {
+          waitingUsers.set(userId, { ...data.user, lastMatchedUserId: opponentId });
+          userConnections.set(userId, ws);
+        }
+
+        if (opponentId) {
+          waitingUsers.set(opponentId, { ...waitingUsers.get(opponentId), lastMatchedUserId: userId });
+          userConnections.set(opponentId, matchedWs);
+        }
       }
     } catch (error) {
       console.error('Error processing message:', error);
@@ -177,7 +186,7 @@ wss.on('connection', (ws) => {
 
 console.log(`WebSocket server is running on port ${port}`);
 
-// keep the server alive, even if no clients connect.
+// Keep the server alive
 setInterval(() => console.log('Server is alive'), 10000);
 
 process.on('SIGTERM', () => {
