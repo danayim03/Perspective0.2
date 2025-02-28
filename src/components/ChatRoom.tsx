@@ -4,7 +4,7 @@ import { Message, Role } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Send, ArrowLeft, RefreshCw, Palette, Check } from "lucide-react";
+import { Send, ArrowLeft, Palette } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import {
   DropdownMenu,
@@ -253,6 +253,8 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     }
   };
 
+  // Commenting out handleRematchClick to simplify the interface
+  /*
   const handleRematchClick = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
       // Set rematching status to prevent connection loss messages
@@ -274,6 +276,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       onRematch();
     }
   };
+  */
   
   const handleRematchDialogConfirm = () => {
     // Set rematching status to prevent connection loss messages
@@ -360,6 +363,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 </DropdownMenuContent>
               </DropdownMenu>
               
+              {/* Rematch button commented out to simplify the interface
               <Button
                 onClick={handleRematchClick}
                 variant="ghost"
@@ -370,6 +374,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                 <span className="hidden xs:inline">Rematch</span>
               </Button>
+              */}
             </div>
           </div>
 
