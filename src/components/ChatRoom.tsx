@@ -57,6 +57,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const [selectedBubbleColor, setSelectedBubbleColor] = useState(defaultBubbleColor);
   const [showRematchDialog, setShowRematchDialog] = useState(false);
   const [rematchDialogMessage, setRematchDialogMessage] = useState("");
+  const [awaitingRematchResponse, setAwaitingRematchResponse] = useState(false);
 
   // Scroll to bottom of messages
   const scrollToBottom = () => {
@@ -151,6 +152,9 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
             description: "Your chat partner wants to find a new match",
           });
         } else if (data.type === 'rematchAccepted') {
+          // Reset awaiting state
+          setAwaitingRematchResponse(false);
+          
           // Show success message
           toast({
             title: "Rematch Accepted",
@@ -169,6 +173,9 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           // Transition to matching screen
           onRematch();
         } else if (data.type === 'rematchDeclined') {
+          // Reset awaiting state
+          setAwaitingRematchResponse(false);
+          
           // Show declined message
           toast({
             title: "Rematch Declined",
@@ -287,6 +294,9 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
 
   const handleRematchClick = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
+      // Set state to indicate we're waiting for a response
+      setAwaitingRematchResponse(true);
+      
       // Send rematch request to the server
       ws.send(JSON.stringify({ type: 'rematchRequest' }));
       
@@ -424,10 +434,11 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 onClick={handleRematchClick}
                 variant="ghost"
                 size="sm"
+                disabled={awaitingRematchResponse}
                 className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
               >
-                <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                <span className="hidden xs:inline">Rematch</span>
+                <RefreshCw className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 ${awaitingRematchResponse ? 'animate-spin' : ''}`} />
+                <span className="hidden xs:inline">{awaitingRematchResponse ? 'Waiting...' : 'Rematch'}</span>
               </Button>
             </div>
           </div>
