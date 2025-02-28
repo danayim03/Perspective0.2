@@ -376,7 +376,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
             <Button
               onClick={handleSend}
               disabled={!newMessage.trim() || !isConnected}
-              className="bg-perspective-400 hover:bg-perspective-500 text-white px-2 py-1 sm:px-3 sm:py-2"
+              className="bg-gray-300 hover:bg-gray-400 text-black px-2 py-1 sm:px-3 sm:py-2"
               size="sm"
             >
               <Send className="w-3 h-3 sm:w-4 sm:h-4" />
