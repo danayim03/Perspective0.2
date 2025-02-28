@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Message, Role } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +19,19 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const [newMessage, setNewMessage] = useState("");
   const [isConnected, setIsConnected] = useState(false);
   const [isNormalChatEnd, setIsNormalChatEnd] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  // Scroll to bottom of messages
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
 
   useEffect(() => {
     if (!ws) {
@@ -45,6 +57,12 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       try {
         const data = JSON.parse(event.data);
         if (data.type === 'chat') {
+          // Hide typing indicator when message arrives
+          setIsTyping(false);
+          if (typingTimeout) {
+            clearTimeout(typingTimeout);
+          }
+          
           const newMessage: Message = {
             id: Date.now().toString(),
             senderId: "other",
@@ -52,6 +70,18 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
             timestamp: new Date(),
           };
           setMessages(prev => [...prev, newMessage]);
+        } else if (data.type === 'typing') {
+          // Show typing indicator
+          setIsTyping(true);
+          
+          // Auto-hide typing indicator after 3 seconds if no new typing events
+          if (typingTimeout) {
+            clearTimeout(typingTimeout);
+          }
+          const timeout = setTimeout(() => {
+            setIsTyping(false);
+          }, 3000);
+          setTypingTimeout(timeout);
         } else if (data.type === 'matchEnded') {
           setIsNormalChatEnd(true); // Set this to true when receiving matchEnded
           const systemMessage: Message = {
@@ -102,8 +132,27 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
 
     return () => {
       ws.removeEventListener('message', messageHandler);
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
     };
-  }, [ws, onGoBack, toast, isNormalChatEnd]);
+  }, [ws, onGoBack, toast, isNormalChatEnd, typingTimeout]);
+
+  // Send typing signal when user is typing
+  const handleTyping = () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: 'typing'
+      }));
+    }
+  };
+
+  // Debounce typing signal
+  useEffect(() => {
+    if (newMessage.trim() && isConnected) {
+      handleTyping();
+    }
+  }, [newMessage, isConnected]);
 
   const handleSend = () => {
     if (!newMessage.trim() || !ws || !isConnected) return;
@@ -157,6 +206,19 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     }
   };
 
+  // Typing indicator component
+  const TypingIndicator = () => (
+    <div className="flex justify-start">
+      <div className="max-w-[85%] p-2 sm:p-3 rounded-lg text-xs sm:text-sm bg-perspective-100 text-gray-700">
+        <div className="flex items-center space-x-1">
+          <div className="h-2 w-2 bg-gray-500 rounded-full animate-pulse" style={{ animationDelay: "0ms" }}></div>
+          <div className="h-2 w-2 bg-gray-500 rounded-full animate-pulse" style={{ animationDelay: "300ms" }}></div>
+          <div className="h-2 w-2 bg-gray-500 rounded-full animate-pulse" style={{ animationDelay: "600ms" }}></div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-perspective-100 to-perspective-200 p-1 sm:p-2 md:p-4 font-mono">
       <Card className="flex-1 flex flex-col w-full mx-auto backdrop-blur-lg bg-white/90 rounded-lg sm:rounded-xl md:rounded-2xl shadow-xl overflow-hidden">
@@ -192,30 +254,38 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
               No messages yet. Start the conversation!
             </div>
           ) : (
-            messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.senderId === "system" 
-                    ? "justify-center"
-                    : message.senderId === "user1" 
-                      ? "justify-end" 
-                      : "justify-start"
-                }`}
-              >
+            <>
+              {messages.map((message) => (
                 <div
-                  className={`max-w-[85%] p-2 sm:p-3 rounded-lg text-xs sm:text-sm ${
-                    message.senderId === "system"
-                      ? "bg-gray-200 text-gray-600"
-                      : message.senderId === "user1"
-                        ? "bg-perspective-400 text-gray-900"
-                        : "bg-perspective-100 text-gray-900"
+                  key={message.id}
+                  className={`flex ${
+                    message.senderId === "system" 
+                      ? "justify-center"
+                      : message.senderId === "user1" 
+                        ? "justify-end" 
+                        : "justify-start"
                   }`}
                 >
-                  {message.content}
+                  <div
+                    className={`max-w-[85%] p-2 sm:p-3 rounded-lg text-xs sm:text-sm ${
+                      message.senderId === "system"
+                        ? "bg-gray-200 text-gray-600"
+                        : message.senderId === "user1"
+                          ? "bg-perspective-400 text-white"
+                          : "bg-perspective-100 text-gray-900"
+                    }`}
+                  >
+                    {message.content}
+                  </div>
                 </div>
-              </div>
-            ))
+              ))}
+              
+              {/* Show typing indicator when the other user is typing */}
+              {isTyping && <TypingIndicator />}
+              
+              {/* Invisible div for scrolling to bottom */}
+              <div ref={messagesEndRef} />
+            </>
           )}
         </div>
 
@@ -225,7 +295,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder={isConnected ? "Type a message..." : "Connecting..."}
-              onKeyPress={(e) => e.key === "Enter" && handleSend()}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
               className="flex-1 bg-white/50 text-xs sm:text-sm h-8 sm:h-10"
               disabled={!isConnected}
             />
