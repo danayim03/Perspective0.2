@@ -24,12 +24,21 @@ const NavigationController = () => {
       setNavDisabled(event.detail.disabled);
     };
 
-    // Add event listener
+    // Define event handler for when resetToWelcome is dispatched
+    const handleResetToWelcome = () => {
+      console.log("App caught resetToWelcome event");
+      // Make sure navigation is enabled when resetting
+      setNavDisabled(false);
+    };
+
+    // Add event listeners
     window.addEventListener('navToggle' as any, handleNavToggle);
+    window.addEventListener('resetToWelcome', handleResetToWelcome);
 
     // Clean up
     return () => {
       window.removeEventListener('navToggle' as any, handleNavToggle);
+      window.removeEventListener('resetToWelcome', handleResetToWelcome);
     };
   }, []);
 

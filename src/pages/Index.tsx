@@ -37,15 +37,17 @@ const Index = () => {
     };
 
     handleRouteChange();
-  }, [location.pathname]);
+  }, [location.pathname, state, ws]);
 
   // Listen for reset to welcome event
   useEffect(() => {
     const handleResetToWelcome = () => {
-      console.log("Reset to welcome event received");
+      console.log("Index component: Reset to welcome event received");
       if (ws) {
+        console.log("Closing WebSocket connection");
         ws.close();
       }
+      console.log("Resetting state to welcome");
       setState("welcome");
       setUser(null);
       setWs(null);
@@ -103,10 +105,9 @@ const Index = () => {
     return () => {
       if (ws) {
         ws.close();
-        setWs(null);
       }
     };
-  }, [user, state]);
+  }, [user, state, toast]);
 
   const handleWelcomeComplete = (userData: Omit<User, "id">) => {
     setUser({ ...userData, id: Date.now().toString() });

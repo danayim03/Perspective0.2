@@ -20,7 +20,7 @@ export const Navigation: React.FC<NavigationProps> = ({ disabled = false }) => {
     
     // When navigating home, always dispatch the resetToWelcome event
     // This ensures we always go back to the welcome screen
-    // Use a small timeout to ensure the event is dispatched before navigation occurs
+    console.log("Home button clicked, dispatching resetToWelcome event");
     window.dispatchEvent(new CustomEvent('resetToWelcome'));
     
     // If we're not already on the home page, navigate there
