@@ -45,6 +45,13 @@ const defaultBubbleColor = {
   textColor: "text-black" 
 };
 
+// Helper function to emit navigation toggle event
+const toggleNavigation = (disabled: boolean) => {
+  window.dispatchEvent(
+    new CustomEvent('navToggle', { detail: { disabled } })
+  );
+};
+
 export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -60,6 +67,25 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const [isRematching, setIsRematching] = useState(false);
   // Add navigate for routing
   const navigate = useNavigate();
+
+  // When chat loads, disable navigation
+  useEffect(() => {
+    toggleNavigation(true);
+    
+    // Re-enable navigation when component unmounts
+    return () => {
+      toggleNavigation(false);
+    };
+  }, []);
+
+  // Update navigation state when chat ends
+  useEffect(() => {
+    if (chatEnded) {
+      toggleNavigation(false);
+    } else {
+      toggleNavigation(true);
+    }
+  }, [chatEnded]);
 
   // Scroll to bottom of messages
   const scrollToBottom = () => {
@@ -356,8 +382,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
               size="sm"
               className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
             >
-              End Chat
-              {/* <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> */}
+              <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
               <span className="hidden xs:inline">{chatEnded ? "Home" : "End"}</span>
             </Button>
             
@@ -388,7 +413,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 </DropdownMenuContent>
               </DropdownMenu>
               
-              {/* <Button
+              <Button
                 onClick={handleRematchClick}
                 variant="ghost"
                 size="sm"
@@ -397,7 +422,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
               >
                 <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                 <span className="hidden xs:inline">Rematch</span>
-              </Button> */}
+              </Button>
             </div>
           </div>
 
