@@ -394,7 +394,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 disabled={chatEnded}
                 className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
               >
-                <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                {/* <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> */}
                 <span className="hidden xs:inline">Rematch</span>
               </Button>
             </div>
