@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Send, ArrowLeft, RefreshCw, Palette, Check } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,6 +58,8 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const [showRematchDialog, setShowRematchDialog] = useState(false);
   const [chatEnded, setChatEnded] = useState(false);
   const [isRematching, setIsRematching] = useState(false);
+  // Add navigate for routing
+  const navigate = useNavigate();
 
   // Scroll to bottom of messages
   const scrollToBottom = () => {
@@ -66,6 +69,16 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
+
+  // Handle navigation - this will stop event propagation on the chat container
+  // allowing the navigation to work even when the chat is active
+  const handleContainerClick = (e: React.MouseEvent) => {
+    // Only stop propagation if chat is ended
+    // This allows clicks to bubble up to navigation when chat is active
+    if (!chatEnded) {
+      e.stopPropagation();
+    }
+  };
 
   useEffect(() => {
     if (!ws) {
@@ -249,8 +262,20 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, systemMessage]);
-      onGoBack();
+      setChatEnded(true); // Mark chat as ended but don't navigate away
+      toast({
+        title: "Chat ended",
+        description: "You have ended the chat",
+      });
     }
+  };
+
+  const handleGoHome = () => {
+    // Explicitly navigate home and close the connection
+    if (ws) {
+      ws.close();
+    }
+    navigate('/');
   };
 
   const handleRematchClick = () => {
@@ -319,18 +344,20 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
 
   return (
     <>
-      <div className="flex flex-col h-[calc(100dvh-48px)] pt-12 bg-gradient-to-br from-perspective-100 to-perspective-200 p-1 sm:p-2 md:p-4 font-mono">
+      <div 
+        className="flex flex-col h-[calc(100dvh-48px)] pt-12 bg-gradient-to-br from-perspective-100 to-perspective-200 p-1 sm:p-2 md:p-4 font-mono"
+        onClick={handleContainerClick}
+      >
         <Card className="flex-1 flex flex-col w-full mx-auto backdrop-blur-lg bg-white/90 rounded-lg sm:rounded-xl md:rounded-2xl shadow-xl overflow-hidden max-h-[calc(100dvh-48px)]">
           <div className="p-2 sm:p-3 md:p-4 border-b flex items-center justify-between">
             <Button
-              onClick={handleEndChat}
+              onClick={chatEnded ? handleGoHome : handleEndChat}
               variant="ghost"
               size="sm"
               className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
-              disabled={chatEnded}
             >
               <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-              <span className="hidden xs:inline">End</span>
+              <span className="hidden xs:inline">{chatEnded ? "Home" : "End"}</span>
             </Button>
             
             <div className="flex items-center gap-2">
@@ -367,12 +394,12 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 disabled={chatEnded}
                 className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
               >
-                {/* <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> */}
+                <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                 <span className="hidden xs:inline">Rematch</span>
               </Button>
             </div>
           </div>
- 
+
           <div className="flex-1 p-2 sm:p-3 md:p-4 overflow-y-auto space-y-2 sm:space-y-3 md:space-y-4">
             {!isConnected && !chatEnded && !isRematching && (
               <div className="h-full flex items-center justify-center text-red-500 text-xs sm:text-sm md:text-base">
@@ -381,7 +408,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
             )}
             {chatEnded && (
               <div className="h-full flex items-center justify-center text-amber-500 text-xs sm:text-sm md:text-base">
-                This chat has ended. You can no longer send messages.
+                This chat has ended. You can go home or find a new match.
               </div>
             )}
             {isRematching && (
