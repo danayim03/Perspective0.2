@@ -126,11 +126,11 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           };
           setMessages(prev => [...prev, systemMessage]);
           setIsConnected(false);
+          setChatEnded(true);
           toast({
             title: "Chat ended",
             description: "Your chat partner has ended the chat",
           });
-          onGoBack();
         } else if (data.type === 'rematchRequested') {
           // Show rematch notification dialog
           setShowRematchDialog(true);
@@ -164,7 +164,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       console.log("WebSocket connection closed");
       setIsConnected(false);
       // Only show connection lost message if it wasn't a normal chat ending
-      if (!isNormalChatEnd) {
+      if (!isNormalChatEnd && !chatEnded) {
         toast({
           title: "Connection lost",
           description: "The chat connection was closed",
@@ -176,7 +176,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     ws.onerror = (error) => {
       console.error("WebSocket error:", error);
       setIsConnected(false);
-      if (!isNormalChatEnd) {
+      if (!isNormalChatEnd && !chatEnded) {
         toast({
           title: "Connection error",
           description: "There was an error with the chat connection",
@@ -191,7 +191,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
         clearTimeout(typingTimeout);
       }
     };
-  }, [ws, onGoBack, toast, isNormalChatEnd, typingTimeout]);
+  }, [ws, onGoBack, toast, isNormalChatEnd, typingTimeout, chatEnded]);
 
   // Send typing signal when user is typing
   const handleTyping = () => {

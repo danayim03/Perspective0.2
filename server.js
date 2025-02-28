@@ -53,8 +53,6 @@ wss.on('connection', (ws) => {
                 // Remove both users from waiting pool
                 waitingUsers.delete(userId);
                 waitingUsers.delete(waitingUserId);
-                userConnections.delete(userId);
-                userConnections.delete(waitingUserId);
                 
                 // Add to active matches
                 activeMatches.set(ws, matchedWs);
@@ -86,8 +84,6 @@ wss.on('connection', (ws) => {
                 // Remove both users from waiting pool
                 waitingUsers.delete(userId);
                 waitingUsers.delete(waitingUserId);
-                userConnections.delete(userId);
-                userConnections.delete(waitingUserId);
                 
                 // Add to active matches
                 activeMatches.set(ws, matchedWs);
@@ -133,18 +129,22 @@ wss.on('connection', (ws) => {
         // Get the matched WebSocket
         const matchedWs = activeMatches.get(ws);
         
-        // Notify the matched user that the other user wants a rematch
         if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
+          // Notify the matched user that the other user wants a rematch
           matchedWs.send(JSON.stringify({ 
             type: 'rematchRequested'
           }));
+          
+          console.log('Sent rematch request to matched user');
         }
         
-        // Clear the match in the activeMatches map
-        if (matchedWs) {
-          activeMatches.delete(matchedWs);
-        }
+        // Remove this connection from active matches but keep matched user's reference
+        // This allows the rematch requester to look for new matches while
+        // the other user can still decide when to look for a new match
         activeMatches.delete(ws);
+        
+        // We don't remove matchedWs from activeMatches yet,
+        // so it stays connected to the chat until they decide to leave
       }
     } catch (error) {
       console.error('Error processing message:', error);
@@ -154,7 +154,7 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     console.log('Client disconnected');
     
-    // Only handle matched users disconnection
+    // Handle matched users disconnection
     const matchedWs = activeMatches.get(ws);
     if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
       matchedWs.send(JSON.stringify({ type: 'matchEnded' }));
