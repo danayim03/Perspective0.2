@@ -12,12 +12,14 @@ export const Navigation: React.FC<NavigationProps> = ({ disabled = false }) => {
   
   // Handle home navigation with state reset
   const handleHomeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
     if (disabled) {
-      e.preventDefault();
       return;
     }
     
-    // When navigating home, dispatch an event to reset to welcome state
+    // When navigating home, always dispatch the resetToWelcome event
+    // This ensures we always go back to the welcome screen
     window.dispatchEvent(new CustomEvent('resetToWelcome'));
     navigate('/');
   };
