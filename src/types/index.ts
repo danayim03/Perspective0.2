@@ -10,6 +10,7 @@ export interface User {
   orientation: Orientation;
   targetGender?: Gender; // The gender of the person they want perspective about
   targetOrientation?: Orientation; // The orientation of the person they want perspective about
+  bubbleColor?: string; // User's preferred chat bubble color
 }
 
 export interface Message {
@@ -17,4 +18,5 @@ export interface Message {
   senderId: string;
   content: string;
   timestamp: Date;
+  bubbleColor?: string; // Optional color for the message bubble
 }

@@ -4,8 +4,14 @@ import { Message, Role } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Send, ArrowLeft, RefreshCw } from "lucide-react";
+import { Send, ArrowLeft, RefreshCw, Palette } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ChatRoomProps {
   userRole: Role;
@@ -13,6 +19,20 @@ interface ChatRoomProps {
   onRematch: () => void;
   ws: WebSocket | null;
 }
+
+// Predefined color options
+const bubbleColorOptions = [
+  { name: "Purple", value: "bg-perspective-400", textColor: "text-black" },
+  { name: "Light Purple", value: "bg-perspective-300", textColor: "text-black" },
+  { name: "Soft Purple", value: "bg-perspective-200", textColor: "text-gray-800" },
+  { name: "Lavender", value: "bg-perspective-100", textColor: "text-gray-800" },
+  { name: "Blue", value: "bg-blue-400", textColor: "text-white" },
+  { name: "Light Blue", value: "bg-blue-300", textColor: "text-gray-800" },
+  { name: "Pink", value: "bg-pink-400", textColor: "text-white" },
+  { name: "Light Pink", value: "bg-pink-300", textColor: "text-gray-800" },
+  { name: "Green", value: "bg-green-400", textColor: "text-white" },
+  { name: "Light Green", value: "bg-green-300", textColor: "text-gray-800" },
+];
 
 export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -23,6 +43,11 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const [selectedBubbleColor, setSelectedBubbleColor] = useState({
+    name: "Purple",
+    value: "bg-perspective-400",
+    textColor: "text-black"
+  });
 
   // Scroll to bottom of messages
   const scrollToBottom = () => {
@@ -163,6 +188,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
         senderId: "user1",
         content: newMessage,
         timestamp: new Date(),
+        bubbleColor: selectedBubbleColor.value,
       };
 
       ws.send(JSON.stringify({
@@ -206,6 +232,14 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     }
   };
 
+  const handleColorChange = (color: typeof bubbleColorOptions[0]) => {
+    setSelectedBubbleColor(color);
+    toast({
+      title: "Color Changed",
+      description: `Chat bubble color set to ${color.name}`,
+    });
+  };
+
   // Typing indicator component
   const TypingIndicator = () => (
     <div className="flex justify-start">
@@ -232,15 +266,43 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
             <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
             <span className="hidden xs:inline">End</span>
           </Button>
-          <Button
-            onClick={handleRematchClick}
-            variant="ghost"
-            size="sm"
-            className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
-          >
-            <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-            <span className="hidden xs:inline">Rematch</span>
-          </Button>
+          
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
+                >
+                  <Palette className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                  <span className="hidden sm:inline">Color</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {bubbleColorOptions.map((color) => (
+                  <DropdownMenuItem
+                    key={color.value}
+                    onClick={() => handleColorChange(color)}
+                    className="flex items-center gap-2"
+                  >
+                    <div className={`w-4 h-4 rounded-full ${color.value}`}></div>
+                    <span>{color.name}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <Button
+              onClick={handleRematchClick}
+              variant="ghost"
+              size="sm"
+              className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
+            >
+              <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+              <span className="hidden xs:inline">Rematch</span>
+            </Button>
+          </div>
         </div>
 
         <div className="flex-1 p-2 sm:p-3 md:p-4 overflow-y-auto space-y-2 sm:space-y-3 md:space-y-4">
@@ -271,7 +333,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                       message.senderId === "system"
                         ? "bg-gray-200 text-gray-600"
                         : message.senderId === "user1"
-                          ? "bg-perspective-400 text-black"
+                          ? message.bubbleColor || selectedBubbleColor.value + " " + selectedBubbleColor.textColor
                           : "bg-perspective-200 text-gray-800"
                     }`}
                   >
