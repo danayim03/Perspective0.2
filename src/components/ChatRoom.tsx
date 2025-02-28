@@ -20,26 +20,19 @@ interface ChatRoomProps {
   ws: WebSocket | null;
 }
 
-// Predefined color options
+// Predefined color theme options based on image
 const bubbleColorOptions = [
-  { name: "Purple", value: "bg-perspective-400", textColor: "text-black" },
-  { name: "Light Purple", value: "bg-perspective-300", textColor: "text-black" },
-  { name: "Soft Purple", value: "bg-perspective-200", textColor: "text-gray-800" },
-  { name: "Lavender", value: "bg-perspective-100", textColor: "text-gray-800" },
-  { name: "Blue", value: "bg-blue-400", textColor: "text-white" },
-  { name: "Light Blue", value: "bg-blue-300", textColor: "text-gray-800" },
-  { name: "Pink", value: "bg-pink-400", textColor: "text-white" },
-  { name: "Light Pink", value: "bg-pink-300", textColor: "text-gray-800" },
-  { name: "Green", value: "bg-green-400", textColor: "text-white" },
-  { name: "Light Green", value: "bg-green-300", textColor: "text-gray-800" },
-  { name: "Gray", value: "bg-gray-400", textColor: "text-white" },
+  { name: "Pool Day", value: "bg-[#92D1FF]", textColor: "text-black" },
+  { name: "Berry Pop", value: "bg-[#F698DB]", textColor: "text-black" },
+  { name: "Fresh Lavender", value: "bg-[#BCACDD]", textColor: "text-black" },
+  { name: "Palm Leaf", value: "bg-[#E1EEAF]", textColor: "text-black" },
 ];
 
-// Default gray bubble color
+// Default light gray bubble color
 const defaultBubbleColor = { 
-  name: "Gray", 
-  value: "bg-gray-400", 
-  textColor: "text-white" 
+  name: "Light Gray", 
+  value: "bg-gray-200", 
+  textColor: "text-black" 
 };
 
 export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) => {
@@ -353,7 +346,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                         ? "bg-gray-200 text-gray-600"
                         : message.senderId === "user1"
                           ? message.bubbleColor || selectedBubbleColor.value + " " + selectedBubbleColor.textColor
-                          : "bg-gray-400 text-white"
+                          : "bg-gray-200 text-black"
                     }`}
                   >
                     {message.content}
