@@ -222,9 +222,21 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
 
   const handleRematchClick = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
-      setIsNormalChatEnd(true);
-      // Don't close the connection, just notify the other user and transition to matching
+      // Don't set isNormalChatEnd to true as we want to stay connected
+      // Add a system message to indicate rematch
+      const systemMessage: Message = {
+        id: Date.now().toString(),
+        senderId: "system",
+        content: "Looking for a new match...",
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, systemMessage]);
+      
+      // Notify other user that you're leaving this chat
       ws.send(JSON.stringify({ type: 'endChat' }));
+      
+      // Call the onRematch function which will transition to matching screen 
+      // but maintain the websocket connection
       onRematch();
     }
   };
