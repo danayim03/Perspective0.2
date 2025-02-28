@@ -140,6 +140,12 @@ const Index = () => {
     }
   };
 
+  // Log the current application state for debugging
+  useEffect(() => {
+    console.log("Current app state:", state);
+    console.log("User:", user);
+  }, [state, user]);
+
   return (
     <div className="min-h-screen px-3 sm:px-4 md:px-6 pt-12 sm:pt-16 container">
       {state === "welcome" && <WelcomeScreen onComplete={handleWelcomeComplete} />}
