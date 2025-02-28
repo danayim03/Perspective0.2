@@ -4,7 +4,7 @@ import { Message, Role } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Send, ArrowLeft, RefreshCw, Palette, Check, X } from "lucide-react";
+import { Send, ArrowLeft, RefreshCw, Palette, Check } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import {
   DropdownMenu,
@@ -15,7 +15,6 @@ import {
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -56,8 +55,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const { toast } = useToast();
   const [selectedBubbleColor, setSelectedBubbleColor] = useState(defaultBubbleColor);
   const [showRematchDialog, setShowRematchDialog] = useState(false);
-  const [rematchDialogMessage, setRematchDialogMessage] = useState("");
-  const [awaitingRematchResponse, setAwaitingRematchResponse] = useState(false);
+  const [chatEnded, setChatEnded] = useState(false);
 
   // Scroll to bottom of messages
   const scrollToBottom = () => {
@@ -118,7 +116,8 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           }, 3000);
           setTypingTimeout(timeout);
         } else if (data.type === 'matchEnded') {
-          setIsNormalChatEnd(true); // Set this to true when receiving matchEnded
+          setIsNormalChatEnd(true); 
+          
           const systemMessage: Message = {
             id: Date.now().toString(),
             senderId: "system",
@@ -133,64 +132,26 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           });
           onGoBack();
         } else if (data.type === 'rematchRequested') {
-          // Show rematch request dialog
-          setRematchDialogMessage(data.message);
+          // Show rematch notification dialog
           setShowRematchDialog(true);
           
-          // Also add a system message
+          // Mark chat as ended to disable chat features
+          setChatEnded(true);
+          
+          // Add a system message
           const systemMessage: Message = {
             id: Date.now().toString(),
             senderId: "system",
-            content: "Your chat partner wants to find a new match.",
+            content: "Your chat partner has requested a rematch and has left to find a new match.",
             timestamp: new Date(),
           };
           setMessages(prev => [...prev, systemMessage]);
           
           // Show toast notification
           toast({
-            title: "Rematch Request",
-            description: "Your chat partner wants to find a new match",
+            title: "Rematch Requested",
+            description: "Your chat partner has left to find a new match",
           });
-        } else if (data.type === 'rematchAccepted') {
-          // Reset awaiting state
-          setAwaitingRematchResponse(false);
-          
-          // Show success message
-          toast({
-            title: "Rematch Accepted",
-            description: "Your chat partner also wants to find a new match!",
-          });
-          
-          // Add system message
-          const systemMessage: Message = {
-            id: Date.now().toString(),
-            senderId: "system",
-            content: "Your chat partner also wants to find a new match! Looking for a new match...",
-            timestamp: new Date(),
-          };
-          setMessages(prev => [...prev, systemMessage]);
-          
-          // Transition to matching screen
-          onRematch();
-        } else if (data.type === 'rematchDeclined') {
-          // Reset awaiting state
-          setAwaitingRematchResponse(false);
-          
-          // Show declined message
-          toast({
-            title: "Rematch Declined",
-            description: "Your chat partner doesn't want to find a new match at this time.",
-            variant: "destructive"
-          });
-          
-          // Add system message
-          const systemMessage: Message = {
-            id: Date.now().toString(),
-            senderId: "system",
-            content: "Your chat partner doesn't want to find a new match at this time.",
-            timestamp: new Date(),
-          };
-          setMessages(prev => [...prev, systemMessage]);
         }
       } catch (error) {
         console.error("Error processing message:", error);
@@ -230,11 +191,11 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
         clearTimeout(typingTimeout);
       }
     };
-  }, [ws, onGoBack, toast, isNormalChatEnd, typingTimeout, onRematch]);
+  }, [ws, onGoBack, toast, isNormalChatEnd, typingTimeout]);
 
   // Send typing signal when user is typing
   const handleTyping = () => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
+    if (ws && ws.readyState === WebSocket.OPEN && !chatEnded) {
       ws.send(JSON.stringify({
         type: 'typing'
       }));
@@ -243,13 +204,13 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
 
   // Debounce typing signal
   useEffect(() => {
-    if (newMessage.trim() && isConnected) {
+    if (newMessage.trim() && isConnected && !chatEnded) {
       handleTyping();
     }
-  }, [newMessage, isConnected]);
+  }, [newMessage, isConnected, chatEnded]);
 
   const handleSend = () => {
-    if (!newMessage.trim() || !ws || !isConnected) return;
+    if (!newMessage.trim() || !ws || !isConnected || chatEnded) return;
 
     try {
       const message: Message = {
@@ -294,68 +255,20 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
 
   const handleRematchClick = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
-      // Set state to indicate we're waiting for a response
-      setAwaitingRematchResponse(true);
-      
-      // Send rematch request to the server
+      // Send rematch request to inform the other user
       ws.send(JSON.stringify({ type: 'rematchRequest' }));
       
-      // Add a system message to indicate rematch request
-      const systemMessage: Message = {
-        id: Date.now().toString(),
-        senderId: "system",
-        content: "You've requested to find a new match. Waiting for your chat partner's response...",
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, systemMessage]);
-      
-      // Also show toast to the current user
-      toast({
-        title: "Rematch Requested",
-        description: "Waiting for your chat partner to respond...",
-      });
-    }
-  };
-  
-  const handleAcceptRematch = () => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      // Close the dialog
-      setShowRematchDialog(false);
-      
-      // Send accept message to server
-      ws.send(JSON.stringify({ type: 'acceptRematch' }));
-      
-      // Add system message
-      const systemMessage: Message = {
-        id: Date.now().toString(),
-        senderId: "system",
-        content: "You've accepted the rematch request. Looking for a new match...",
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, systemMessage]);
-      
-      // Transition to matching screen
+      // Immediately transition to matching screen to find a new match
       onRematch();
     }
   };
   
-  const handleDeclineRematch = () => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      // Close the dialog
-      setShowRematchDialog(false);
-      
-      // Send decline message to server
-      ws.send(JSON.stringify({ type: 'declineRematch' }));
-      
-      // Add system message
-      const systemMessage: Message = {
-        id: Date.now().toString(),
-        senderId: "system",
-        content: "You've declined the rematch request.",
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, systemMessage]);
-    }
+  const handleRematchDialogConfirm = () => {
+    // Close the dialog
+    setShowRematchDialog(false);
+    
+    // Transition to matching screen
+    onRematch();
   };
 
   const handleColorChange = (color: typeof bubbleColorOptions[0]) => {
@@ -399,6 +312,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
               variant="ghost"
               size="sm"
               className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
+              disabled={chatEnded}
             >
               <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
               <span className="hidden xs:inline">End</span>
@@ -411,6 +325,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                     variant="ghost"
                     size="sm"
                     className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
+                    disabled={chatEnded}
                   >
                     <Palette className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                     <span className="hidden sm:inline">Color</span>
@@ -434,22 +349,27 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 onClick={handleRematchClick}
                 variant="ghost"
                 size="sm"
-                disabled={awaitingRematchResponse}
+                disabled={chatEnded}
                 className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
               >
-                <RefreshCw className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 ${awaitingRematchResponse ? 'animate-spin' : ''}`} />
-                <span className="hidden xs:inline">{awaitingRematchResponse ? 'Waiting...' : 'Rematch'}</span>
+                <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                <span className="hidden xs:inline">Rematch</span>
               </Button>
             </div>
           </div>
 
           <div className="flex-1 p-2 sm:p-3 md:p-4 overflow-y-auto space-y-2 sm:space-y-3 md:space-y-4">
-            {!isConnected && (
+            {!isConnected && !chatEnded && (
               <div className="h-full flex items-center justify-center text-red-500 text-xs sm:text-sm md:text-base">
                 Connection lost. Please try again.
               </div>
             )}
-            {isConnected && messages.length === 0 ? (
+            {chatEnded && (
+              <div className="h-full flex items-center justify-center text-amber-500 text-xs sm:text-sm md:text-base">
+                This chat has ended. You can no longer send messages.
+              </div>
+            )}
+            {isConnected && messages.length === 0 && !chatEnded ? (
               <div className="h-full flex items-center justify-center text-gray-500 text-xs sm:text-sm md:text-base">
                 No messages yet. Start the conversation!
               </div>
@@ -481,7 +401,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 ))}
                 
                 {/* Show typing indicator when the other user is typing */}
-                {isTyping && <TypingIndicator />}
+                {isTyping && !chatEnded && <TypingIndicator />}
                 
                 {/* Invisible div for scrolling to bottom */}
                 <div ref={messagesEndRef} />
@@ -494,14 +414,20 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
               <Input
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                placeholder={isConnected ? "Type a message..." : "Connecting..."}
+                placeholder={
+                  chatEnded 
+                    ? "This chat has ended" 
+                    : isConnected 
+                      ? "Type a message..." 
+                      : "Connecting..."
+                }
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 className="flex-1 bg-white/50 text-xs sm:text-sm h-8 sm:h-10"
-                disabled={!isConnected}
+                disabled={!isConnected || chatEnded}
               />
               <Button
                 onClick={handleSend}
-                disabled={!newMessage.trim() || !isConnected}
+                disabled={!newMessage.trim() || !isConnected || chatEnded}
                 className="bg-gray-300 hover:bg-gray-400 text-black px-2 py-1 sm:px-3 sm:py-2"
                 size="sm"
               >
@@ -512,23 +438,19 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
         </Card>
       </div>
       
-      {/* Rematch Request Dialog */}
+      {/* Rematch Notification Dialog */}
       <AlertDialog open={showRematchDialog} onOpenChange={setShowRematchDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Rematch Request</AlertDialogTitle>
+            <AlertDialogTitle>Your opponent requested a rematch</AlertDialogTitle>
             <AlertDialogDescription>
-              {rematchDialogMessage}
+              Your chat partner has left to find a new match. Click "OK" to also find a new match.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="flex flex-col sm:flex-row gap-2">
-            <AlertDialogCancel onClick={handleDeclineRematch} className="flex items-center gap-1">
-              <X className="w-4 h-4" />
-              No thanks
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={handleAcceptRematch} className="flex items-center gap-1 bg-perspective-400 hover:bg-perspective-500">
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={handleRematchDialogConfirm} className="flex items-center gap-1 bg-perspective-400 hover:bg-perspective-500">
               <Check className="w-4 h-4" />
-              Yes, find new match
+              OK
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
