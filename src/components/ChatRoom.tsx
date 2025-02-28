@@ -208,7 +208,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                     message.senderId === "system"
                       ? "bg-gray-200 text-gray-600"
                       : message.senderId === "user1"
-                        ? "bg-perspective-400 text-white"
+                        ? "bg-perspective-400 text-gray-900"
                         : "bg-perspective-100 text-gray-900"
                   }`}
                 >
