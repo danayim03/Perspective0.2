@@ -138,13 +138,11 @@ wss.on('connection', (ws) => {
           console.log('Sent rematch request to matched user');
         }
         
-        // Remove this connection from active matches but keep matched user's reference
-        // This allows the rematch requester to look for new matches while
-        // the other user can still decide when to look for a new match
+        // Clean up the match from activeMatches
+        if (matchedWs) {
+          activeMatches.delete(matchedWs);
+        }
         activeMatches.delete(ws);
-        
-        // We don't remove matchedWs from activeMatches yet,
-        // so it stays connected to the chat until they decide to leave
       }
     } catch (error) {
       console.error('Error processing message:', error);

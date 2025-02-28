@@ -132,7 +132,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
             description: "Your chat partner has ended the chat",
           });
         } else if (data.type === 'rematchRequested') {
-          // Show rematch notification dialog
+          // Show rematch notification dialog immediately
           setShowRematchDialog(true);
           
           // Mark chat as ended to disable chat features
@@ -267,8 +267,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       };
       setMessages(prev => [...prev, systemMessage]);
       
-      // Transition to matching screen to find a new match
-      // The existing websocket connection will be maintained
+      // Immediately move to waiting screen
       onRematch();
     }
   };
@@ -277,7 +276,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     // Close the dialog
     setShowRematchDialog(false);
     
-    // Transition to matching screen
+    // Immediately start looking for new matches
     onRematch();
   };
 
