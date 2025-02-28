@@ -1,8 +1,7 @@
-
 import { WebSocketServer } from 'ws';
 
 const port = process.env.PORT || 8080;
-const wss = new WebSocketServer({ port });
+const wss = new WebSocketServer({ port: parseInt(port, 10) });
 
 // Store waiting users
 const waitingUsers = new Map(); // userId -> user data
@@ -163,3 +162,14 @@ wss.on('connection', (ws) => {
 });
 
 console.log(`WebSocket server is running on port ${port}`);
+
+// keep the server alive, even if no clients connect.
+setInterval(() => console.log('Server is alive'), 10000);
+
+process.on('SIGTERM', () => {
+  console.log("Received SIGTERM. Gracefully shutting down.");
+  wss.close(() => {
+    console.log("WebSocket server closed.");
+    process.exit(0);
+  });
+});
