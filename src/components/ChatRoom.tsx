@@ -32,7 +32,15 @@ const bubbleColorOptions = [
   { name: "Light Pink", value: "bg-pink-300", textColor: "text-gray-800" },
   { name: "Green", value: "bg-green-400", textColor: "text-white" },
   { name: "Light Green", value: "bg-green-300", textColor: "text-gray-800" },
+  { name: "Gray", value: "bg-gray-400", textColor: "text-white" },
 ];
+
+// Default gray bubble color
+const defaultBubbleColor = { 
+  name: "Gray", 
+  value: "bg-gray-400", 
+  textColor: "text-white" 
+};
 
 export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -43,11 +51,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const [selectedBubbleColor, setSelectedBubbleColor] = useState({
-    name: "Purple",
-    value: "bg-perspective-400",
-    textColor: "text-black"
-  });
+  const [selectedBubbleColor, setSelectedBubbleColor] = useState(defaultBubbleColor);
 
   // Scroll to bottom of messages
   const scrollToBottom = () => {
@@ -234,6 +238,21 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
 
   const handleColorChange = (color: typeof bubbleColorOptions[0]) => {
     setSelectedBubbleColor(color);
+    
+    // Update all previous user messages to the new color
+    setMessages(prevMessages => 
+      prevMessages.map(message => {
+        // Only update user's own messages
+        if (message.senderId === "user1") {
+          return {
+            ...message,
+            bubbleColor: color.value
+          };
+        }
+        return message;
+      })
+    );
+    
     toast({
       title: "Color Changed",
       description: `Chat bubble color set to ${color.name}`,
@@ -334,7 +353,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                         ? "bg-gray-200 text-gray-600"
                         : message.senderId === "user1"
                           ? message.bubbleColor || selectedBubbleColor.value + " " + selectedBubbleColor.textColor
-                          : "bg-perspective-200 text-gray-800"
+                          : "bg-gray-400 text-white"
                     }`}
                   >
                     {message.content}
