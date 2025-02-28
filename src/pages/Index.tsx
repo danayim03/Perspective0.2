@@ -5,6 +5,7 @@ import { WelcomeScreen } from "@/components/WelcomeScreen";
 import { MatchingScreen } from "@/components/MatchingScreen";
 import { ChatRoom } from "@/components/ChatRoom";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate, useLocation } from "react-router-dom";
 
 type AppState = "welcome" | "matching" | "chat";
 
@@ -20,6 +21,27 @@ const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [ws, setWs] = useState<WebSocket | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Handle navigation events
+  useEffect(() => {
+    // If we navigated away and back to home, reset to welcome state
+    const handleRouteChange = () => {
+      // Only reset if we're coming back to the index page from elsewhere
+      if (location.pathname === "/" && state !== "welcome") {
+        console.log("Back on home page, resetting state");
+        if (ws) {
+          ws.close();
+        }
+        setState("welcome");
+        setUser(null);
+        setWs(null);
+      }
+    };
+
+    handleRouteChange();
+  }, [location.pathname]);
 
   useEffect(() => {
     // Only establish connection when user enters the app
