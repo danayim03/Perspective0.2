@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 interface NavigationProps {
   disabled?: boolean;
@@ -8,12 +8,25 @@ interface NavigationProps {
 
 export const Navigation: React.FC<NavigationProps> = ({ disabled = false }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Handle home navigation with state reset
+  const handleHomeClick = (e: React.MouseEvent) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
+    
+    // When navigating home, dispatch an event to reset to welcome state
+    window.dispatchEvent(new CustomEvent('resetToWelcome'));
+    navigate('/');
+  };
   
   return (
     <nav className="w-full fixed top-0 left-0 px-4 sm:px-6 py-3 bg-white z-20 flex justify-between font-mono shadow-sm">
       <Link 
-        to={disabled ? "#" : "/"}
-        onClick={(e) => disabled && e.preventDefault()}
+        to="#"
+        onClick={handleHomeClick}
         className={`font-medium text-sm sm:text-base ${
           location.pathname === "/" 
             ? disabled

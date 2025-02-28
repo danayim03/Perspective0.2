@@ -302,9 +302,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       ws.close();
     }
     
-    // Instead of just navigating to "/", we'll use the onGoBack function
-    // which properly resets the state in the parent component (Index.tsx)
-    // and shows the welcome screen
+    // Use the onGoBack function to return to welcome screen
     onGoBack();
   };
 
