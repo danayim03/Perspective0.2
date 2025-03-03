@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Message, Role } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -65,13 +64,11 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const [showRematchDialog, setShowRematchDialog] = useState(false);
   const [chatEnded, setChatEnded] = useState(false);
   const [isRematching, setIsRematching] = useState(false);
-  // For handling viewport height on mobile
+  const inputRef = useRef<HTMLInputElement>(null);
   const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  // Add navigate for routing
   const navigate = useNavigate();
 
-  // Track viewport height changes (for mobile keyboard)
   useEffect(() => {
     const handleResize = () => {
       setViewportHeight(window.innerHeight);
@@ -100,17 +97,14 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     };
   }, []);
 
-  // When chat loads, disable navigation
   useEffect(() => {
     toggleNavigation(true);
     
-    // Re-enable navigation when component unmounts
     return () => {
       toggleNavigation(false);
     };
   }, []);
 
-  // Update navigation state when chat ends
   useEffect(() => {
     if (chatEnded) {
       toggleNavigation(false);
@@ -119,7 +113,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     }
   }, [chatEnded]);
 
-  // Improved scroll to bottom of messages with smooth behavior
   const scrollToBottom = (immediate = false) => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ 
@@ -129,9 +122,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     }
   };
 
-  // Enhanced scroll behavior when messages change or keyboard appears
   useEffect(() => {
-    // Using a timeout to ensure the DOM has updated
     const scrollTimer = setTimeout(() => {
       scrollToBottom(false);
     }, 100);
@@ -139,19 +130,13 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     return () => clearTimeout(scrollTimer);
   }, [messages, isTyping, viewportHeight]);
 
-  // Also scroll when input is focused (keyboard appears)
   const handleInputFocus = () => {
-    // Use a short delay to allow the keyboard to appear
     setTimeout(() => {
       scrollToBottom(true);
     }, 300);
   };
 
-  // Handle navigation - this will stop event propagation on the chat container
-  // allowing the navigation to work even when the chat is active
   const handleContainerClick = (e: React.MouseEvent) => {
-    // Only stop propagation if chat is ended
-    // This allows clicks to bubble up to navigation when chat is active
     if (!chatEnded) {
       e.stopPropagation();
     }
@@ -167,7 +152,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       return;
     }
 
-    // Set up connection status
     if (ws.readyState === WebSocket.OPEN) {
       setIsConnected(true);
     }
@@ -181,7 +165,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       try {
         const data = JSON.parse(event.data);
         if (data.type === 'chat') {
-          // Hide typing indicator when message arrives
           setIsTyping(false);
           if (typingTimeout) {
             clearTimeout(typingTimeout);
@@ -195,10 +178,8 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           };
           setMessages(prev => [...prev, newMessage]);
         } else if (data.type === 'typing') {
-          // Show typing indicator
           setIsTyping(true);
           
-          // Auto-hide typing indicator after 3 seconds if no new typing events
           if (typingTimeout) {
             clearTimeout(typingTimeout);
           }
@@ -222,13 +203,10 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
             description: "Your chat partner has ended the chat",
           });
         } else if (data.type === 'rematchRequested') {
-          // Show rematch notification dialog immediately
           setShowRematchDialog(true);
           
-          // Mark chat as ended to disable chat features
           setChatEnded(true);
           
-          // Add a system message
           const systemMessage: Message = {
             id: Date.now().toString(),
             senderId: "system",
@@ -237,7 +215,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           };
           setMessages(prev => [...prev, systemMessage]);
           
-          // Show toast notification
           toast({
             title: "Rematch Requested",
             description: "Your chat partner has left to find a new match",
@@ -253,7 +230,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     ws.onclose = () => {
       console.log("WebSocket connection closed");
       setIsConnected(false);
-      // Only show connection lost message if it wasn't a normal chat ending
       if (!isNormalChatEnd && !chatEnded && !isRematching) {
         toast({
           title: "Connection lost",
@@ -283,7 +259,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     };
   }, [ws, onGoBack, toast, isNormalChatEnd, typingTimeout, chatEnded, isRematching]);
 
-  // Send typing signal when user is typing
   const handleTyping = () => {
     if (ws && ws.readyState === WebSocket.OPEN && !chatEnded) {
       ws.send(JSON.stringify({
@@ -292,7 +267,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     }
   };
 
-  // Debounce typing signal
   useEffect(() => {
     if (newMessage.trim() && isConnected && !chatEnded) {
       handleTyping();
@@ -319,7 +293,12 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       setMessages(prev => [...prev, message]);
       setNewMessage("");
       
-      // Scroll immediately when user sends a message
+      if (inputRef.current) {
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 10);
+      }
+      
       setTimeout(() => scrollToBottom(true), 50);
     } catch (error) {
       console.error("Error sending message:", error);
@@ -342,7 +321,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, systemMessage]);
-      setChatEnded(true); // Mark chat as ended but don't navigate away
+      setChatEnded(true);
       toast({
         title: "Chat ended",
         description: "You have ended the chat",
@@ -351,33 +330,26 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   };
 
   const handleGoHome = () => {
-    // Close the WebSocket connection
     if (ws) {
       ws.close();
     }
     
-    // Use the onGoBack function to return to welcome screen
     onGoBack();
   };
 
   const handleRematchDialogConfirm = () => {
-    // Set rematching status to prevent connection loss messages
     setIsRematching(true);
     
-    // Close the dialog
     setShowRematchDialog(false);
     
-    // Immediately start looking for new matches
     onRematch();
   };
 
   const handleColorChange = (color: typeof bubbleColorOptions[0]) => {
     setSelectedBubbleColor(color);
     
-    // Update all previous user messages to the new color
     setMessages(prevMessages => 
       prevMessages.map(message => {
-        // Only update user's own messages
         if (message.senderId === "user1") {
           return {
             ...message,
@@ -389,7 +361,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     );
   };
 
-  // Typing indicator component
   const TypingIndicator = () => (
     <div className="flex justify-start">
       <div className="max-w-[85%] p-1.5 sm:p-2 rounded-lg text-xs sm:text-sm bg-perspective-100 text-gray-700">
@@ -505,10 +476,8 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                   </div>
                 ))}
                 
-                {/* Show typing indicator when the other user is typing */}
                 {isTyping && !chatEnded && !isRematching && <TypingIndicator />}
                 
-                {/* Invisible div for scrolling to bottom */}
                 <div ref={messagesEndRef} className="h-1" />
               </>
             )}
@@ -517,6 +486,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           <div className="p-2 sm:p-3 md:p-4 border-t sticky bottom-0 bg-white/95 backdrop-blur-sm chat-input-container z-10">
             <div className="flex gap-1 sm:gap-2">
               <Input
+                ref={inputRef}
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder={
@@ -546,7 +516,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
         </Card>
       </div>
       
-      {/* Rematch Notification Dialog */}
       <AlertDialog open={showRematchDialog} onOpenChange={setShowRematchDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
