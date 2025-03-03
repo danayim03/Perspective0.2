@@ -127,6 +127,33 @@
   }
 }
 
+/* Mobile chat optimizations */
+@media screen and (max-width: 640px) {
+  /* Optimize for virtual keyboard appearance */
+  .chat-container {
+    height: calc(100vh - 100px); /* Base height with some padding */
+    min-height: 300px; /* Ensure minimum usable space */
+  }
+  
+  /* Smaller padding for messages on mobile */
+  .chat-message {
+    @apply p-1.5 sm:p-2 text-xs leading-snug max-w-[80%];
+  }
+  
+  /* Compact bottom bar on mobile */
+  .chat-input-container {
+    @apply p-1 border-t sticky bottom-0 bg-white/95 backdrop-blur-sm;
+  }
+}
+
+/* Fix for iOS/Safari keyboard issues */
+@supports (-webkit-touch-callout: none) {
+  .chat-container {
+    /* iOS-specific viewport height adjustment */
+    height: -webkit-fill-available;
+  }
+}
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }

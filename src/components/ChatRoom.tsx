@@ -65,8 +65,40 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const [showRematchDialog, setShowRematchDialog] = useState(false);
   const [chatEnded, setChatEnded] = useState(false);
   const [isRematching, setIsRematching] = useState(false);
+  // For handling viewport height on mobile
+  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   // Add navigate for routing
   const navigate = useNavigate();
+
+  // Track viewport height changes (for mobile keyboard)
+  useEffect(() => {
+    const handleResize = () => {
+      setViewportHeight(window.innerHeight);
+    };
+    
+    // Handle iOS keyboard appearance specifically
+    // Visual viewport API is more reliable for keyboard detection
+    const handleVisualViewportResize = () => {
+      if (window.visualViewport) {
+        setViewportHeight(window.visualViewport.height);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Use Visual Viewport API when available (better for iOS keyboard handling)
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleVisualViewportResize);
+    }
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleVisualViewportResize);
+      }
+    };
+  }, []);
 
   // When chat loads, disable navigation
   useEffect(() => {
@@ -87,14 +119,33 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     }
   }, [chatEnded]);
 
-  // Scroll to bottom of messages
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // Improved scroll to bottom of messages with smooth behavior
+  const scrollToBottom = (immediate = false) => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: immediate ? "auto" : "smooth",
+        block: "end"
+      });
+    }
   };
 
+  // Enhanced scroll behavior when messages change or keyboard appears
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, isTyping]);
+    // Using a timeout to ensure the DOM has updated
+    const scrollTimer = setTimeout(() => {
+      scrollToBottom(false);
+    }, 100);
+    
+    return () => clearTimeout(scrollTimer);
+  }, [messages, isTyping, viewportHeight]);
+
+  // Also scroll when input is focused (keyboard appears)
+  const handleInputFocus = () => {
+    // Use a short delay to allow the keyboard to appear
+    setTimeout(() => {
+      scrollToBottom(true);
+    }, 300);
+  };
 
   // Handle navigation - this will stop event propagation on the chat container
   // allowing the navigation to work even when the chat is active
@@ -267,6 +318,9 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
 
       setMessages(prev => [...prev, message]);
       setNewMessage("");
+      
+      // Scroll immediately when user sends a message
+      setTimeout(() => scrollToBottom(true), 50);
     } catch (error) {
       console.error("Error sending message:", error);
       toast({
@@ -338,11 +392,11 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   // Typing indicator component
   const TypingIndicator = () => (
     <div className="flex justify-start">
-      <div className="max-w-[85%] p-2 sm:p-3 rounded-lg text-xs sm:text-sm bg-perspective-100 text-gray-700">
+      <div className="max-w-[85%] p-1.5 sm:p-2 rounded-lg text-xs sm:text-sm bg-perspective-100 text-gray-700">
         <div className="flex items-center space-x-1">
-          <div className="h-2 w-2 bg-gray-500 rounded-full animate-pulse" style={{ animationDelay: "0ms" }}></div>
-          <div className="h-2 w-2 bg-gray-500 rounded-full animate-pulse" style={{ animationDelay: "300ms" }}></div>
-          <div className="h-2 w-2 bg-gray-500 rounded-full animate-pulse" style={{ animationDelay: "600ms" }}></div>
+          <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 bg-gray-500 rounded-full animate-pulse" style={{ animationDelay: "0ms" }}></div>
+          <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 bg-gray-500 rounded-full animate-pulse" style={{ animationDelay: "300ms" }}></div>
+          <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 bg-gray-500 rounded-full animate-pulse" style={{ animationDelay: "600ms" }}></div>
         </div>
       </div>
     </div>
@@ -353,8 +407,18 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       <div 
         className="flex flex-col h-[calc(100dvh-48px)] pt-12 bg-gradient-to-br from-perspective-100 to-perspective-200 p-1 sm:p-2 md:p-4 font-mono"
         onClick={handleContainerClick}
+        style={{ 
+          minHeight: '300px', 
+          maxHeight: '100dvh' 
+        }}
       >
-        <Card className="flex-1 flex flex-col w-full mx-auto backdrop-blur-lg bg-white/90 rounded-lg sm:rounded-xl md:rounded-2xl shadow-xl overflow-hidden max-h-[calc(100dvh-48px)]">
+        <Card 
+          className="flex-1 flex flex-col w-full mx-auto backdrop-blur-lg bg-white/90 rounded-lg sm:rounded-xl md:rounded-2xl shadow-xl overflow-hidden chat-container"
+          ref={chatContainerRef}
+          style={{ 
+            maxHeight: `${viewportHeight - 60}px` // Adjust for header
+          }}
+        >
           <div className="p-2 sm:p-3 md:p-4 border-b flex items-center justify-between">
             <Button
               onClick={chatEnded ? handleGoHome : handleEndChat}
@@ -394,7 +458,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
             </div>
           </div>
 
-          <div className="flex-1 p-2 sm:p-3 md:p-4 overflow-y-auto space-y-2 sm:space-y-3 md:space-y-4">
+          <div className="flex-1 p-2 sm:p-3 md:p-4 overflow-y-auto space-y-2 sm:space-y-3 md:space-y-4 scrollbar-hide" style={{ paddingBottom: '4rem' }}>
             {!isConnected && !chatEnded && !isRematching && (
               <div className="h-full flex items-center justify-center text-red-500 text-xs sm:text-sm md:text-base">
                 Connection lost. Please try again.
@@ -428,7 +492,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                     }`}
                   >
                     <div
-                      className={`max-w-[85%] p-2 sm:p-3 rounded-lg text-xs sm:text-sm ${
+                      className={`max-w-[85%] p-1.5 sm:p-2 rounded-lg text-xs sm:text-sm chat-message ${
                         message.senderId === "system"
                           ? "bg-gray-200 text-gray-600"
                           : message.senderId === "user1"
@@ -445,12 +509,12 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                 {isTyping && !chatEnded && !isRematching && <TypingIndicator />}
                 
                 {/* Invisible div for scrolling to bottom */}
-                <div ref={messagesEndRef} />
+                <div ref={messagesEndRef} className="h-1" />
               </>
             )}
           </div>
 
-          <div className="p-2 sm:p-3 md:p-4 border-t">
+          <div className="p-2 sm:p-3 md:p-4 border-t sticky bottom-0 bg-white/95 backdrop-blur-sm chat-input-container z-10">
             <div className="flex gap-1 sm:gap-2">
               <Input
                 value={newMessage}
@@ -465,6 +529,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
                         : "Connecting..."
                 }
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                onFocus={handleInputFocus}
                 className="flex-1 bg-white/50 text-xs sm:text-sm h-8 sm:h-10"
                 disabled={!isConnected || chatEnded || isRematching}
               />
