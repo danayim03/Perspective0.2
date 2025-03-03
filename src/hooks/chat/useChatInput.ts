@@ -1,4 +1,3 @@
-
 import { useRef } from "react";
 
 export function useChatInput() {
@@ -8,9 +7,10 @@ export function useChatInput() {
   // Function to focus input without dismissing keyboard
   const focusInputWithoutDismissingKeyboard = () => {
     if (inputRef.current) {
-      // Focus without scrolling
-      window.scrollTo(0, 0);
+      // Prevent scrolling and keep focus
+      const scrollPos = window.scrollY;
       inputRef.current.focus();
+      window.scrollTo(0, scrollPos); // Maintain current scroll position
     }
   };
 
@@ -20,7 +20,9 @@ export function useChatInput() {
       initialFocusHandled.current = true;
     }
     
-    window.scrollTo(0, 0);
+    // Prevent any automatic scrolling
+    const scrollPos = window.scrollY;
+    setTimeout(() => window.scrollTo(0, scrollPos), 10);
   };
 
   return {

@@ -24,8 +24,22 @@ export const preventLayoutShift = () => {
   
   // Prevent scrolling to input when it gets focus
   document.addEventListener('focusin', (e) => {
-    e.preventDefault();
+    // Save current scroll position
+    const scrollPos = window.scrollY;
+    
     // Prevent default browser scroll behavior
-    window.scrollTo(0, 0);
+    e.preventDefault();
+    
+    // Restore scroll position
+    setTimeout(() => window.scrollTo(0, scrollPos), 10);
+  }, { passive: false });
+  
+  // Prevent layout shift on input focus
+  document.addEventListener('touchstart', (e) => {
+    if ((e.target as HTMLElement).tagName === 'INPUT') {
+      // Prevent any default shifting
+      const scrollPos = window.scrollY;
+      setTimeout(() => window.scrollTo(0, scrollPos), 10);
+    }
   }, { passive: false });
 };

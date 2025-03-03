@@ -35,9 +35,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     if (input) {
       // Handle focus without scrolling
       const handleFocusIn = (e: FocusEvent) => {
+        // Prevent default behavior
         e.preventDefault();
+        
         // Let the parent component handle focus logic
         onFocus();
+        
+        // Prevent screen from moving
+        const scrollPos = window.scrollY;
+        setTimeout(() => window.scrollTo(0, scrollPos), 10);
       };
       
       input.addEventListener('focusin', handleFocusIn);
@@ -49,7 +55,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   const handleSendClick = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent default button behavior
+    
+    // Capture scroll position before sending
+    const scrollPos = window.scrollY;
+    
+    // Send and then maintain position
     handleSend();
+    
+    // Maintain scroll position to prevent movement
+    setTimeout(() => window.scrollTo(0, scrollPos), 10);
   };
 
   return (
@@ -68,7 +82,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   ? "Type a message..." 
                   : "Connecting..."
           }
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              // Prevent default to avoid losing focus
+              e.preventDefault();
+              handleSend();
+            }
+          }}
           className="flex-1 bg-white/50 text-xs sm:text-sm h-8 sm:h-10"
           disabled={!isConnected || chatEnded || isRematching}
         />

@@ -47,12 +47,14 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   } = useChatView(chatEnded);
 
   useEffect(() => {
-    const scrollTimer = setTimeout(() => {
-      scrollToBottom(false);
-    }, 100);
-    
-    return () => clearTimeout(scrollTimer);
-  }, [messages, isTyping, viewportHeight]);
+    if (messages.length > 0) {
+      const scrollTimer = setTimeout(() => {
+        scrollToBottom(false);
+      }, 100);
+      
+      return () => clearTimeout(scrollTimer);
+    }
+  }, [messages]);
 
   useEffect(() => {
     if (newMessage.trim() && isConnected && !chatEnded) {
@@ -64,9 +66,15 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     if (sendMessage(newMessage, selectedBubbleColor.value)) {
       setNewMessage("");
       
+      const currentScrollPos = window.scrollY;
+      
       setTimeout(() => {
         focusInputWithoutDismissingKeyboard();
-        setTimeout(() => scrollToBottom(true), 50);
+        window.scrollTo(0, currentScrollPos);
+        setTimeout(() => {
+          scrollToBottom(false);
+          focusInputWithoutDismissingKeyboard();
+        }, 50);
       }, 10);
     }
   };
