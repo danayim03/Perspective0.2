@@ -1,3 +1,4 @@
+
 import { useState, KeyboardEvent, useEffect } from "react";
 import { Gender, Orientation, Role, User } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -160,8 +161,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         }
       </h1>
       
-      <div className="space-y-4 max-w-md mx-auto">
-        <h3 className="text-lg font-medium">{nickname} is:</h3>
+      {/* Gender Section - Separated */}
+      <div className="space-y-4 max-w-md mx-auto mt-8">
+        <h3 className="text-lg font-medium">{nickname}'s gender is:</h3>
         <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
           <Button 
             onClick={() => setGender("male")}
@@ -196,8 +198,12 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             Non-binary 
           </Button>
         </div>
-        
-        <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mt-4">
+      </div>
+      
+      {/* Orientation Section - Separated */}
+      <div className="space-y-4 max-w-md mx-auto mt-8">
+        <h3 className="text-lg font-medium">{nickname}'s orientation is:</h3>
+        <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
           <Button 
             onClick={() => setOrientation("straight")}
             variant="outline"
@@ -234,78 +240,85 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
       </div>
       
       {role === "getter" && (
-        <div className="space-y-4 max-w-md mx-auto mt-8">
-          <h3 className="text-lg font-medium">Find me a:</h3>
-          <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
-            <Button 
-              onClick={() => setTargetGender("male")}
-              variant="outline"
-              className={`rounded-full px-6 transition-colors ${targetGender === "male" 
-                ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
-              onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("male"))}
-            >
-              Male
-            </Button>
-            
-            <Button 
-              onClick={() => setTargetGender("female")}
-              variant="outline"
-              className={`rounded-full px-6 transition-colors ${targetGender === "female" 
-                ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
-              onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("female"))}
-            >
-              Female
-            </Button>
-            
-            <Button 
-              onClick={() => setTargetGender("non-binary")}
-              variant="outline"
-              className={`rounded-full px-6 transition-colors ${targetGender === "non-binary" 
-                ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
-              onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("non-binary"))}
-            >
-              Non-binary 
-            </Button>
+        <>
+          {/* Target Gender Section */}
+          <div className="space-y-4 max-w-md mx-auto mt-8">
+            <h3 className="text-lg font-medium">Find me a gender:</h3>
+            <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
+              <Button 
+                onClick={() => setTargetGender("male")}
+                variant="outline"
+                className={`rounded-full px-6 transition-colors ${targetGender === "male" 
+                  ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
+                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
+                onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("male"))}
+              >
+                Male
+              </Button>
+              
+              <Button 
+                onClick={() => setTargetGender("female")}
+                variant="outline"
+                className={`rounded-full px-6 transition-colors ${targetGender === "female" 
+                  ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
+                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
+                onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("female"))}
+              >
+                Female
+              </Button>
+              
+              <Button 
+                onClick={() => setTargetGender("non-binary")}
+                variant="outline"
+                className={`rounded-full px-6 transition-colors ${targetGender === "non-binary" 
+                  ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
+                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
+                onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("non-binary"))}
+              >
+                Non-binary 
+              </Button>
+            </div>
           </div>
           
-          <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mt-4">
-            <Button 
-              onClick={() => setTargetOrientation("straight")}
-              variant="outline"
-              className={`rounded-full px-6 transition-colors ${targetOrientation === "straight" 
-                ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
-              onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("straight"))}
-            >
-              Straight 
-            </Button>
-            
-            <Button 
-              onClick={() => setTargetOrientation("gay")}
-              variant="outline"
-              className={`rounded-full px-6 transition-colors ${targetOrientation === "gay" 
-                ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
-              onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("gay"))}
-            >
-              Gay 
-            </Button>
-            
-            <Button 
-              onClick={() => setTargetOrientation("bisexual")}
-              variant="outline"
-              className={`rounded-full px-6 transition-colors ${targetOrientation === "bisexual" 
-                ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
-              onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("bisexual"))}
-            >
-              Bisexual
-            </Button>
+          {/* Target Orientation Section */}
+          <div className="space-y-4 max-w-md mx-auto mt-8">
+            <h3 className="text-lg font-medium">Find me an orientation:</h3>
+            <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
+              <Button 
+                onClick={() => setTargetOrientation("straight")}
+                variant="outline"
+                className={`rounded-full px-6 transition-colors ${targetOrientation === "straight" 
+                  ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
+                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
+                onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("straight"))}
+              >
+                Straight 
+              </Button>
+              
+              <Button 
+                onClick={() => setTargetOrientation("gay")}
+                variant="outline"
+                className={`rounded-full px-6 transition-colors ${targetOrientation === "gay" 
+                  ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
+                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
+                onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("gay"))}
+              >
+                Gay 
+              </Button>
+              
+              <Button 
+                onClick={() => setTargetOrientation("bisexual")}
+                variant="outline"
+                className={`rounded-full px-6 transition-colors ${targetOrientation === "bisexual" 
+                  ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
+                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
+                onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("bisexual"))}
+              >
+                Bisexual
+              </Button>
+            </div>
           </div>
-        </div>
+        </>
       )}
       
       <div className="pt-6">
