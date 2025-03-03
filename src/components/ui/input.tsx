@@ -14,6 +14,10 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
         )}
         ref={ref}
         {...props}
+        style={{
+          fontSize: '16px', // Prevent zoom on iOS
+          ...props.style
+        }}
       />
     )
   }
