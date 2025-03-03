@@ -14,6 +14,19 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   message, 
   selectedBubbleColor 
 }) => {
+  // Determine the bubble color to use
+  const getBubbleStyles = () => {
+    if (message.senderId === "system") {
+      return "bg-gray-200 text-gray-600";
+    } else if (message.senderId === "user1") {
+      return message.bubbleColor 
+        ? `${message.bubbleColor} ${selectedBubbleColor.textColor}`
+        : `${selectedBubbleColor.value} ${selectedBubbleColor.textColor}`;
+    } else {
+      return "bg-gray-200 text-black";
+    }
+  };
+
   return (
     <div
       className={`flex ${
@@ -25,13 +38,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
       }`}
     >
       <div
-        className={`max-w-[85%] p-1.5 sm:p-2 rounded-lg text-xs sm:text-sm chat-message ${
-          message.senderId === "system"
-            ? "bg-gray-200 text-gray-600"
-            : message.senderId === "user1"
-              ? message.bubbleColor || selectedBubbleColor.value + " " + selectedBubbleColor.textColor
-              : "bg-gray-200 text-black"
-        }`}
+        className={`max-w-[85%] p-1.5 sm:p-2 rounded-lg text-xs sm:text-sm chat-message ${getBubbleStyles()}`}
       >
         {message.content}
       </div>

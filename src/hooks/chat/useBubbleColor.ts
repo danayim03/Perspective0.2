@@ -1,12 +1,9 @@
 
 import { useState } from "react";
+import { defaultBubbleColor } from "@/components/chat/constants";
 
 export function useBubbleColor() {
-  const [selectedBubbleColor, setSelectedBubbleColor] = useState({ 
-    name: "Light Gray", 
-    value: "bg-gray-200", 
-    textColor: "text-black" 
-  });
+  const [selectedBubbleColor, setSelectedBubbleColor] = useState(defaultBubbleColor);
 
   return {
     selectedBubbleColor,

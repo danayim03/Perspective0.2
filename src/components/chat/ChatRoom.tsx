@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Role } from "@/types";
 import { Card } from "@/components/ui/card";
@@ -151,4 +150,3 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     </>
   );
 };
-
