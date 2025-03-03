@@ -29,7 +29,6 @@ interface ChatRoomProps {
   ws: WebSocket | null;
 }
 
-// Predefined color theme options based on image
 const bubbleColorOptions = [
   { name: "Pool Day", value: "bg-[#92D1FF]", textColor: "text-black" },
   { name: "Berry Pop", value: "bg-[#F698DB]", textColor: "text-black" },
@@ -37,14 +36,12 @@ const bubbleColorOptions = [
   { name: "Palm Leaf", value: "bg-[#E1EEAF]", textColor: "text-black" },
 ];
 
-// Default light gray bubble color
 const defaultBubbleColor = { 
   name: "Light Gray", 
   value: "bg-gray-200", 
   textColor: "text-black" 
 };
 
-// Helper function to emit navigation toggle event
 const toggleNavigation = (disabled: boolean) => {
   window.dispatchEvent(
     new CustomEvent('navToggle', { detail: { disabled } })
@@ -68,26 +65,28 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const initialLayoutSet = useRef(false);
 
   useEffect(() => {
     const handleResize = () => {
       setViewportHeight(window.innerHeight);
     };
     
-    // Handle iOS keyboard appearance specifically
-    // Visual viewport API is more reliable for keyboard detection
     const handleVisualViewportResize = () => {
       if (window.visualViewport) {
-        setViewportHeight(window.visualViewport.height);
+        if (initialLayoutSet.current) {
+          setViewportHeight(window.visualViewport.height);
+        }
       }
     };
     
     window.addEventListener('resize', handleResize);
     
-    // Use Visual Viewport API when available (better for iOS keyboard handling)
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', handleVisualViewportResize);
     }
+    
+    initialLayoutSet.current = true;
     
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -131,9 +130,11 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   }, [messages, isTyping, viewportHeight]);
 
   const handleInputFocus = () => {
-    setTimeout(() => {
-      scrollToBottom(true);
-    }, 300);
+    if (initialLayoutSet.current) {
+      setTimeout(() => {
+        scrollToBottom(true);
+      }, 300);
+    }
   };
 
   const handleContainerClick = (e: React.MouseEvent) => {
@@ -380,7 +381,11 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
         onClick={handleContainerClick}
         style={{ 
           minHeight: '300px', 
-          maxHeight: '100dvh' 
+          maxHeight: '100dvh',
+          position: 'fixed',
+          width: '100%',
+          left: 0,
+          top: 0
         }}
       >
         <Card 
