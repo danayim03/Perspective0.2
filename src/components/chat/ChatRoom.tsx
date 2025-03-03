@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Role } from "@/types";
 import { Card } from "@/components/ui/card";
@@ -44,7 +43,8 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     chatContainerRef,
     inputRef,
     scrollToBottom,
-    handleInputFocus
+    handleInputFocus,
+    focusInputWithoutDismissingKeyboard
   } = useChatView(chatEnded);
 
   // Scroll to bottom when messages change
@@ -68,13 +68,12 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     if (sendMessage(newMessage, selectedBubbleColor.value)) {
       setNewMessage("");
       
-      if (inputRef.current) {
-        setTimeout(() => {
-          inputRef.current?.focus();
-        }, 10);
-      }
-      
-      setTimeout(() => scrollToBottom(true), 50);
+      // Keep keyboard visible by immediately re-focusing the input
+      setTimeout(() => {
+        focusInputWithoutDismissingKeyboard();
+        // Scroll to bottom after sending
+        setTimeout(() => scrollToBottom(true), 50);
+      }, 10);
     }
   };
 

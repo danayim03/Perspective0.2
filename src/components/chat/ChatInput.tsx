@@ -47,6 +47,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
   }, [inputRef, onFocus]);
 
+  const handleSendClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent default button behavior
+    handleSend();
+  };
+
   return (
     <div className="p-2 sm:p-3 md:p-4 border-t sticky bottom-0 bg-white/95 backdrop-blur-sm chat-input-container z-10">
       <div className="flex gap-1 sm:gap-2">
@@ -68,7 +73,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           disabled={!isConnected || chatEnded || isRematching}
         />
         <Button
-          onClick={handleSend}
+          onClick={handleSendClick}
           disabled={!newMessage.trim() || !isConnected || chatEnded || isRematching}
           className="bg-gray-300 hover:bg-gray-400 text-black px-2 py-1 sm:px-3 sm:py-2"
           size="sm"

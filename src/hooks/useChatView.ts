@@ -73,6 +73,15 @@ export function useChatView(chatEnded: boolean) {
     }
   };
 
+  // Function to focus input without dismissing keyboard
+  const focusInputWithoutDismissingKeyboard = () => {
+    if (inputRef.current) {
+      // Focus without scrolling
+      window.scrollTo(0, 0);
+      inputRef.current.focus();
+    }
+  };
+
   // Handle input focus without scrolling
   const handleInputFocus = () => {
     if (!initialFocusHandled.current) {
@@ -90,6 +99,7 @@ export function useChatView(chatEnded: boolean) {
     chatContainerRef,
     inputRef,
     scrollToBottom,
-    handleInputFocus
+    handleInputFocus,
+    focusInputWithoutDismissingKeyboard
   };
 }
