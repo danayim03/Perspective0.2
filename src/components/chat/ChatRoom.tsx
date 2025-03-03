@@ -1,14 +1,14 @@
-import { useState, useEffect, useRef } from "react";
-import { Message, Role } from "@/types";
+
+import { useState, useEffect } from "react";
+import { Role } from "@/types";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
+import { bubbleColorOptions } from "./constants";
 import { MessageList } from "./MessageList";
 import { ChatInput } from "./ChatInput";
 import { ChatHeader } from "./ChatHeader";
 import { RematchDialog } from "./RematchDialog";
-import { toggleNavigation } from "./utils";
-import { bubbleColorOptions, defaultBubbleColor } from "./constants";
+import { useChatConnection } from "@/hooks/useChatConnection";
+import { useChatView } from "@/hooks/useChatView";
 
 interface ChatRoomProps {
   userRole: Role;
@@ -18,80 +18,36 @@ interface ChatRoomProps {
 }
 
 export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) => {
-  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [isConnected, setIsConnected] = useState(false);
-  const [isNormalChatEnd, setIsNormalChatEnd] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { toast } = useToast();
-  const [selectedBubbleColor, setSelectedBubbleColor] = useState(defaultBubbleColor);
-  const [showRematchDialog, setShowRematchDialog] = useState(false);
-  const [chatEnded, setChatEnded] = useState(false);
-  const [isRematching, setIsRematching] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-  const initialLayoutSet = useRef(false);
-  const initialFocusHandled = useRef(false);
+  
+  // Use custom hooks for chat functionality and view management
+  const { 
+    messages, 
+    isConnected, 
+    isTyping, 
+    chatEnded, 
+    isRematching, 
+    showRematchDialog, 
+    setShowRematchDialog, 
+    handleTyping, 
+    sendMessage, 
+    endChat, 
+    handleRematch, 
+    closeConnection 
+  } = useChatConnection(ws, { onEndChat: onGoBack, onRematch });
+  
+  const {
+    viewportHeight,
+    selectedBubbleColor,
+    setSelectedBubbleColor,
+    messagesEndRef,
+    chatContainerRef,
+    inputRef,
+    scrollToBottom,
+    handleInputFocus
+  } = useChatView(chatEnded);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setViewportHeight(window.innerHeight);
-      window.scrollTo(0, 0);
-    };
-    
-    const handleVisualViewportResize = () => {
-      if (window.visualViewport) {
-        setViewportHeight(window.visualViewport.height);
-        window.scrollTo(0, 0);
-      }
-    };
-    
-    window.addEventListener('resize', handleResize);
-    
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', handleVisualViewportResize);
-    }
-    
-    window.scrollTo(0, 0);
-    initialLayoutSet.current = true;
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', handleVisualViewportResize);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    toggleNavigation(true);
-    
-    return () => {
-      toggleNavigation(false);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (chatEnded) {
-      toggleNavigation(false);
-    } else {
-      toggleNavigation(true);
-    }
-  }, [chatEnded]);
-
-  const scrollToBottom = (immediate = false) => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ 
-        behavior: immediate ? "auto" : "smooth",
-        block: "end"
-      });
-    }
-  };
-
+  // Scroll to bottom when messages change
   useEffect(() => {
     const scrollTimer = setTimeout(() => {
       scrollToBottom(false);
@@ -100,169 +56,16 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     return () => clearTimeout(scrollTimer);
   }, [messages, isTyping, viewportHeight]);
 
-  const handleInputFocus = () => {
-    if (!initialFocusHandled.current) {
-      initialFocusHandled.current = true;
-    }
-    
-    window.scrollTo(0, 0);
-  };
-
-  const handleContainerClick = (e: React.MouseEvent) => {
-    if (!chatEnded) {
-      e.stopPropagation();
-    }
-  };
-
-  useEffect(() => {
-    if (!ws) {
-      toast({
-        title: "Connection Error",
-        description: "No WebSocket connection available",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (ws.readyState === WebSocket.OPEN) {
-      setIsConnected(true);
-    }
-
-    ws.onopen = () => {
-      console.log("WebSocket connection opened");
-      setIsConnected(true);
-    };
-
-    const messageHandler = (event: MessageEvent) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'chat') {
-          setIsTyping(false);
-          if (typingTimeout) {
-            clearTimeout(typingTimeout);
-          }
-          
-          const newMessage: Message = {
-            id: Date.now().toString(),
-            senderId: "other",
-            content: data.message,
-            timestamp: new Date(),
-          };
-          setMessages(prev => [...prev, newMessage]);
-        } else if (data.type === 'typing') {
-          setIsTyping(true);
-          
-          if (typingTimeout) {
-            clearTimeout(typingTimeout);
-          }
-          const timeout = setTimeout(() => {
-            setIsTyping(false);
-          }, 3000);
-          setTypingTimeout(timeout);
-        } else if (data.type === 'matchEnded') {
-          setIsNormalChatEnd(true); 
-          
-          const systemMessage: Message = {
-            id: Date.now().toString(),
-            senderId: "system",
-            content: "Your chat partner has ended the chat.",
-            timestamp: new Date(),
-          };
-          setMessages(prev => [...prev, systemMessage]);
-          setChatEnded(true);
-          toast({
-            title: "Chat ended",
-            description: "Your chat partner has ended the chat",
-          });
-        } else if (data.type === 'rematchRequested') {
-          setShowRematchDialog(true);
-          
-          setChatEnded(true);
-          
-          const systemMessage: Message = {
-            id: Date.now().toString(),
-            senderId: "system",
-            content: "Your chat partner has requested a rematch and has left to find a new match.",
-            timestamp: new Date(),
-          };
-          setMessages(prev => [...prev, systemMessage]);
-          
-          toast({
-            title: "Rematch Requested",
-            description: "Your chat partner has left to find a new match",
-          });
-        }
-      } catch (error) {
-        console.error("Error processing message:", error);
-      }
-    };
-
-    ws.addEventListener('message', messageHandler);
-
-    ws.onclose = () => {
-      console.log("WebSocket connection closed");
-      setIsConnected(false);
-      if (!isNormalChatEnd && !chatEnded && !isRematching) {
-        toast({
-          title: "Connection lost",
-          description: "The chat connection was closed",
-          variant: "destructive",
-        });
-      }
-    };
-
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-      setIsConnected(false);
-      if (!isNormalChatEnd && !chatEnded && !isRematching) {
-        toast({
-          title: "Connection error",
-          description: "There was an error with the chat connection",
-          variant: "destructive",
-        });
-      }
-    };
-
-    return () => {
-      ws.removeEventListener('message', messageHandler);
-      if (typingTimeout) {
-        clearTimeout(typingTimeout);
-      }
-    };
-  }, [ws, onGoBack, toast, isNormalChatEnd, typingTimeout, chatEnded, isRematching]);
-
-  const handleTyping = () => {
-    if (ws && ws.readyState === WebSocket.OPEN && !chatEnded) {
-      ws.send(JSON.stringify({
-        type: 'typing'
-      }));
-    }
-  };
-
+  // Trigger typing notification when message changes
   useEffect(() => {
     if (newMessage.trim() && isConnected && !chatEnded) {
       handleTyping();
     }
   }, [newMessage, isConnected, chatEnded]);
 
+  // Handle sending a message
   const handleSend = () => {
-    if (!newMessage.trim() || !ws || !isConnected || chatEnded) return;
-
-    try {
-      const message: Message = {
-        id: Date.now().toString(),
-        senderId: "user1",
-        content: newMessage,
-        timestamp: new Date(),
-        bubbleColor: selectedBubbleColor.value,
-      };
-
-      ws.send(JSON.stringify({
-        type: 'chat',
-        message: newMessage
-      }));
-
-      setMessages(prev => [...prev, message]);
+    if (sendMessage(newMessage, selectedBubbleColor.value)) {
       setNewMessage("");
       
       if (inputRef.current) {
@@ -272,65 +75,19 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       }
       
       setTimeout(() => scrollToBottom(true), 50);
-    } catch (error) {
-      console.error("Error sending message:", error);
-      toast({
-        title: "Error",
-        description: "Failed to send message",
-        variant: "destructive",
-      });
     }
   };
 
-  const handleEndChat = () => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      setIsNormalChatEnd(true);
-      ws.send(JSON.stringify({ type: 'endChat' }));
-      const systemMessage: Message = {
-        id: Date.now().toString(),
-        senderId: "system",
-        content: "You have ended the chat.",
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, systemMessage]);
-      setChatEnded(true);
-      toast({
-        title: "Chat ended",
-        description: "You have ended the chat",
-      });
-    }
-  };
-
-  const handleGoHome = () => {
-    if (ws) {
-      ws.close();
-    }
-    
-    onGoBack();
-  };
-
-  const handleRematchDialogConfirm = () => {
-    setIsRematching(true);
-    
-    setShowRematchDialog(false);
-    
-    onRematch();
-  };
-
+  // Handle chat bubble color change
   const handleColorChange = (color: typeof bubbleColorOptions[0]) => {
     setSelectedBubbleColor(color);
-    
-    setMessages(prevMessages => 
-      prevMessages.map(message => {
-        if (message.senderId === "user1") {
-          return {
-            ...message,
-            bubbleColor: color.value
-          };
-        }
-        return message;
-      })
-    );
+  };
+
+  // Handle container click to prevent propagation when chat is active
+  const handleContainerClick = (e: React.MouseEvent) => {
+    if (!chatEnded) {
+      e.stopPropagation();
+    }
   };
 
   return (
@@ -358,7 +115,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           }}
         >
           <ChatHeader 
-            onEndChat={chatEnded ? handleGoHome : handleEndChat}
+            onEndChat={chatEnded ? closeConnection : endChat}
             chatEnded={chatEnded}
             onColorChange={handleColorChange}
           />
@@ -389,7 +146,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       <RematchDialog 
         open={showRematchDialog}
         onOpenChange={setShowRematchDialog}
-        onConfirm={handleRematchDialogConfirm}
+        onConfirm={handleRematch}
       />
     </>
   );
