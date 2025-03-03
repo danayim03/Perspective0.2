@@ -19,7 +19,6 @@ interface ChatRoomProps {
 export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) => {
   const [newMessage, setNewMessage] = useState("");
   
-  // Use custom hooks for chat functionality and view management
   const { 
     messages, 
     isConnected, 
@@ -47,7 +46,6 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     focusInputWithoutDismissingKeyboard
   } = useChatView(chatEnded);
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     const scrollTimer = setTimeout(() => {
       scrollToBottom(false);
@@ -56,33 +54,27 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     return () => clearTimeout(scrollTimer);
   }, [messages, isTyping, viewportHeight]);
 
-  // Trigger typing notification when message changes
   useEffect(() => {
     if (newMessage.trim() && isConnected && !chatEnded) {
       handleTyping();
     }
   }, [newMessage, isConnected, chatEnded]);
 
-  // Handle sending a message
   const handleSend = () => {
     if (sendMessage(newMessage, selectedBubbleColor.value)) {
       setNewMessage("");
       
-      // Keep keyboard visible by immediately re-focusing the input
       setTimeout(() => {
         focusInputWithoutDismissingKeyboard();
-        // Scroll to bottom after sending
         setTimeout(() => scrollToBottom(true), 50);
       }, 10);
     }
   };
 
-  // Handle chat bubble color change
   const handleColorChange = (color: typeof bubbleColorOptions[0]) => {
     setSelectedBubbleColor(color);
   };
 
-  // Handle container click to prevent propagation when chat is active
   const handleContainerClick = (e: React.MouseEvent) => {
     if (!chatEnded) {
       e.stopPropagation();
