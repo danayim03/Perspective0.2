@@ -174,7 +174,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Button 
             onClick={() => setGender("male")}
             className={`rounded-full px-6 ${gender === "male" 
-              ? "bg-gray-200 text-gray-800" 
+              ? "bg-lightGreen text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setGender("male"))}
           >
@@ -184,7 +184,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Button 
             onClick={() => setGender("female")}
             className={`rounded-full px-6 ${gender === "female" 
-              ? "bg-gray-200 text-gray-800" 
+              ? "bg-lightGreen text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setGender("female"))}
           >
@@ -194,7 +194,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Button 
             onClick={() => setGender("non-binary")}
             className={`rounded-full px-6 ${gender === "non-binary" 
-              ? "bg-gray-200 text-gray-800" 
+              ? "bg-lightGreen text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setGender("non-binary"))}
           >
@@ -206,7 +206,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Button 
             onClick={() => setOrientation("straight")}
             className={`rounded-full px-6 ${orientation === "straight" 
-              ? "bg-gray-200 text-gray-800" 
+              ? "bg-lightGreen text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setOrientation("straight"))}
           >
@@ -216,7 +216,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Button 
             onClick={() => setOrientation("gay")}
             className={`rounded-full px-6 ${orientation === "gay" 
-              ? "bg-gray-200 text-gray-800" 
+              ? "bg-lightGreen text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setOrientation("gay"))}
           >
@@ -226,7 +226,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <Button 
             onClick={() => setOrientation("bisexual")}
             className={`rounded-full px-6 ${orientation === "bisexual" 
-              ? "bg-gray-200 text-gray-800" 
+              ? "bg-lightGreen text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setOrientation("bisexual"))}
           >
@@ -242,7 +242,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             <Button 
               onClick={() => setTargetGender("male")}
               className={`rounded-full px-6 ${targetGender === "male" 
-                ? "bg-gray-200 text-gray-800" 
+                ? "bg-lightGreen text-gray-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("male"))}
             >
@@ -252,7 +252,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             <Button 
               onClick={() => setTargetGender("female")}
               className={`rounded-full px-6 ${targetGender === "female" 
-                ? "bg-gray-200 text-gray-800" 
+                ? "bg-lightGreen text-gray-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("female"))}
             >
@@ -262,7 +262,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             <Button 
               onClick={() => setTargetGender("non-binary")}
               className={`rounded-full px-6 ${targetGender === "non-binary" 
-                ? "bg-gray-200 text-gray-800" 
+                ? "bg-lightGreen text-gray-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("non-binary"))}
             >
@@ -274,7 +274,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             <Button 
               onClick={() => setTargetOrientation("straight")}
               className={`rounded-full px-6 ${targetOrientation === "straight" 
-                ? "bg-gray-200 text-gray-800" 
+                ? "bg-lightGreen text-gray-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("straight"))}
             >
@@ -284,7 +284,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             <Button 
               onClick={() => setTargetOrientation("gay")}
               className={`rounded-full px-6 ${targetOrientation === "gay" 
-                ? "bg-gray-200 text-gray-800" 
+                ? "bg-lightGreen text-gray-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("gay"))}
             >
@@ -294,7 +294,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             <Button 
               onClick={() => setTargetOrientation("bisexual")}
               className={`rounded-full px-6 ${targetOrientation === "bisexual" 
-                ? "bg-gray-200 text-gray-800" 
+                ? "bg-lightGreen text-gray-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("bisexual"))}
             >
