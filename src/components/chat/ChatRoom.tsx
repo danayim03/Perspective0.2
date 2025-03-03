@@ -40,11 +40,13 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   useEffect(() => {
     const handleResize = () => {
       setViewportHeight(window.innerHeight);
+      window.scrollTo(0, 0);
     };
     
     const handleVisualViewportResize = () => {
       if (window.visualViewport) {
         setViewportHeight(window.visualViewport.height);
+        window.scrollTo(0, 0);
       }
     };
     
@@ -54,6 +56,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
       window.visualViewport.addEventListener('resize', handleVisualViewportResize);
     }
     
+    window.scrollTo(0, 0);
     initialLayoutSet.current = true;
     
     return () => {
@@ -100,12 +103,9 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const handleInputFocus = () => {
     if (!initialFocusHandled.current) {
       initialFocusHandled.current = true;
-      return;
     }
     
-    setTimeout(() => {
-      scrollToBottom(true);
-    }, 300);
+    window.scrollTo(0, 0);
   };
 
   const handleContainerClick = (e: React.MouseEvent) => {
@@ -336,7 +336,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   return (
     <>
       <div 
-        className="flex flex-col h-[calc(100dvh-48px)] pt-12 bg-gradient-to-br from-perspective-100 to-perspective-200 p-1 sm:p-2 md:p-4 font-mono"
+        className="flex flex-col h-[100dvh] pt-12 bg-gradient-to-br from-perspective-100 to-perspective-200 p-1 sm:p-2 md:p-4 font-mono"
         onClick={handleContainerClick}
         style={{ 
           minHeight: '300px', 
@@ -353,7 +353,8 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           ref={chatContainerRef}
           style={{ 
             maxHeight: `${viewportHeight - 60}px`,
-            position: 'relative'
+            position: 'relative',
+            overflow: 'hidden'
           }}
         >
           <ChatHeader 

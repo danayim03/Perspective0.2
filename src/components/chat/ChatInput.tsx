@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
+import { preventLayoutShift } from "./utils";
 
 interface ChatInputProps {
   newMessage: string;
@@ -25,24 +26,24 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   inputRef,
   onFocus
 }) => {
-  // Prevent keyboard caused layout shifts
+  // Apply layout fixes when component mounts
   useEffect(() => {
+    // Apply prevention for iOS devices
+    preventLayoutShift();
+    
     const input = inputRef.current;
     if (input) {
-      // Apply this only for iOS devices
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-      if (isIOS) {
-        // Capture the scroll position before focus
-        const handleFocusIn = () => {
-          // Let the parent component handle the focus logic
-          onFocus();
-        };
-        
-        input.addEventListener('focusin', handleFocusIn);
-        return () => {
-          input.removeEventListener('focusin', handleFocusIn);
-        };
-      }
+      // Handle focus without scrolling
+      const handleFocusIn = (e: FocusEvent) => {
+        e.preventDefault();
+        // Let the parent component handle focus logic
+        onFocus();
+      };
+      
+      input.addEventListener('focusin', handleFocusIn);
+      return () => {
+        input.removeEventListener('focusin', handleFocusIn);
+      };
     }
   }, [inputRef, onFocus]);
 
@@ -63,7 +64,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   : "Connecting..."
           }
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          onFocus={onFocus}
           className="flex-1 bg-white/50 text-xs sm:text-sm h-8 sm:h-10"
           disabled={!isConnected || chatEnded || isRematching}
         />
