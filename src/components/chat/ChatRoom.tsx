@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Role } from "@/types";
 import { Card } from "@/components/ui/card";
@@ -92,7 +93,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   return (
     <>
       <div 
-        className="flex flex-col h-[100dvh] pt-12 bg-gradient-to-br from-perspective-100 to-perspective-200 p-1 sm:p-2 md:p-4 font-mono"
+        className="flex flex-col h-[100dvh] pt-16 bg-gradient-to-br from-perspective-100 to-perspective-200 p-1 sm:p-2 md:p-4 font-mono"
         onClick={handleContainerClick}
         style={{ 
           minHeight: '300px', 
