@@ -1,4 +1,3 @@
-
 import { useState, KeyboardEvent, useEffect } from "react";
 import { Gender, Orientation, Role, User } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -26,17 +25,11 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [nickname, setNickname] = useState("");
   const [nicknameInputFocused, setNicknameInputFocused] = useState(false);
   
-  // States for typing animation
   const firstLine = "Start chatting anonymously with strangers...";
   const [displayedFirstLine, setDisplayedFirstLine] = useState("");
   const [typingComplete, setTypingComplete] = useState(false);
   
-  // Typing animation effect
   useEffect(() => {
-    // Reset localStorage to ensure animation plays
-    // localStorage.removeItem('typingAnimationPlayed');
-    
-    // Always run the animation
     let currentIndexFirst = 0;
     const intervalIdFirst = setInterval(() => {
       if (currentIndexFirst <= firstLine.length) {
@@ -46,9 +39,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         clearInterval(intervalIdFirst);
         setTypingComplete(true);
       }
-    }, 30); // Typing speed for first line
+    }, 30);
     
-    // Cleanup function
     return () => {
       clearInterval(intervalIdFirst);
     };
@@ -173,8 +165,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
           <Button 
             onClick={() => setGender("male")}
-            className={`rounded-full px-6 ${gender === "male" 
-              ? "bg-lightGreen text-gray-800" 
+            variant="outline"
+            className={`rounded-full px-6 transition-colors ${gender === "male" 
+              ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setGender("male"))}
           >
@@ -183,8 +176,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           
           <Button 
             onClick={() => setGender("female")}
-            className={`rounded-full px-6 ${gender === "female" 
-              ? "bg-lightGreen text-gray-800" 
+            variant="outline"
+            className={`rounded-full px-6 transition-colors ${gender === "female" 
+              ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setGender("female"))}
           >
@@ -193,8 +187,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           
           <Button 
             onClick={() => setGender("non-binary")}
-            className={`rounded-full px-6 ${gender === "non-binary" 
-              ? "bg-lightGreen text-gray-800" 
+            variant="outline"
+            className={`rounded-full px-6 transition-colors ${gender === "non-binary" 
+              ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setGender("non-binary"))}
           >
@@ -205,8 +200,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mt-4">
           <Button 
             onClick={() => setOrientation("straight")}
-            className={`rounded-full px-6 ${orientation === "straight" 
-              ? "bg-lightGreen text-gray-800" 
+            variant="outline"
+            className={`rounded-full px-6 transition-colors ${orientation === "straight" 
+              ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setOrientation("straight"))}
           >
@@ -215,8 +211,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           
           <Button 
             onClick={() => setOrientation("gay")}
-            className={`rounded-full px-6 ${orientation === "gay" 
-              ? "bg-lightGreen text-gray-800" 
+            variant="outline"
+            className={`rounded-full px-6 transition-colors ${orientation === "gay" 
+              ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setOrientation("gay"))}
           >
@@ -225,8 +222,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           
           <Button 
             onClick={() => setOrientation("bisexual")}
-            className={`rounded-full px-6 ${orientation === "bisexual" 
-              ? "bg-lightGreen text-gray-800" 
+            variant="outline"
+            className={`rounded-full px-6 transition-colors ${orientation === "bisexual" 
+              ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
               : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
             onKeyDown={(e) => handleKeyDown(e, () => setOrientation("bisexual"))}
           >
@@ -241,8 +239,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
             <Button 
               onClick={() => setTargetGender("male")}
-              className={`rounded-full px-6 ${targetGender === "male" 
-                ? "bg-lightGreen text-gray-800" 
+              variant="outline"
+              className={`rounded-full px-6 transition-colors ${targetGender === "male" 
+                ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("male"))}
             >
@@ -251,8 +250,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             
             <Button 
               onClick={() => setTargetGender("female")}
-              className={`rounded-full px-6 ${targetGender === "female" 
-                ? "bg-lightGreen text-gray-800" 
+              variant="outline"
+              className={`rounded-full px-6 transition-colors ${targetGender === "female" 
+                ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("female"))}
             >
@@ -261,8 +261,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             
             <Button 
               onClick={() => setTargetGender("non-binary")}
-              className={`rounded-full px-6 ${targetGender === "non-binary" 
-                ? "bg-lightGreen text-gray-800" 
+              variant="outline"
+              className={`rounded-full px-6 transition-colors ${targetGender === "non-binary" 
+                ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetGender("non-binary"))}
             >
@@ -273,8 +274,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
           <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mt-4">
             <Button 
               onClick={() => setTargetOrientation("straight")}
-              className={`rounded-full px-6 ${targetOrientation === "straight" 
-                ? "bg-lightGreen text-gray-800" 
+              variant="outline"
+              className={`rounded-full px-6 transition-colors ${targetOrientation === "straight" 
+                ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("straight"))}
             >
@@ -283,8 +285,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             
             <Button 
               onClick={() => setTargetOrientation("gay")}
-              className={`rounded-full px-6 ${targetOrientation === "gay" 
-                ? "bg-lightGreen text-gray-800" 
+              variant="outline"
+              className={`rounded-full px-6 transition-colors ${targetOrientation === "gay" 
+                ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("gay"))}
             >
@@ -293,8 +296,9 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             
             <Button 
               onClick={() => setTargetOrientation("bisexual")}
-              className={`rounded-full px-6 ${targetOrientation === "bisexual" 
-                ? "bg-lightGreen text-gray-800" 
+              variant="outline"
+              className={`rounded-full px-6 transition-colors ${targetOrientation === "bisexual" 
+                ? "bg-selection-default hover:bg-selection-hover text-gray-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
               onKeyDown={(e) => handleKeyDown(e, () => setTargetOrientation("bisexual"))}
             >

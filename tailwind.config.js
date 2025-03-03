@@ -40,6 +40,10 @@ export default {
           foreground: "hsl(var(--popover-foreground))",
         },
         lightGreen: "#c6e882",
+        selection: {
+          default: "#c6e882",
+          hover: "#b4d965",
+        },
       },
     },
   },
