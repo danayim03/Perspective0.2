@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Message, Role } from "@/types";
 import { Card } from "@/components/ui/card";
@@ -36,6 +35,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const initialLayoutSet = useRef(false);
+  const initialFocusHandled = useRef(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -44,9 +44,7 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
     
     const handleVisualViewportResize = () => {
       if (window.visualViewport) {
-        if (initialLayoutSet.current) {
-          setViewportHeight(window.visualViewport.height);
-        }
+        setViewportHeight(window.visualViewport.height);
       }
     };
     
@@ -100,11 +98,14 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
   }, [messages, isTyping, viewportHeight]);
 
   const handleInputFocus = () => {
-    if (initialLayoutSet.current) {
-      setTimeout(() => {
-        scrollToBottom(true);
-      }, 300);
+    if (!initialFocusHandled.current) {
+      initialFocusHandled.current = true;
+      return;
     }
+    
+    setTimeout(() => {
+      scrollToBottom(true);
+    }, 300);
   };
 
   const handleContainerClick = (e: React.MouseEvent) => {
@@ -343,14 +344,16 @@ export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) =
           position: 'fixed',
           width: '100%',
           left: 0,
-          top: 0
+          top: 0,
+          overflowY: 'hidden'
         }}
       >
         <Card 
           className="flex-1 flex flex-col w-full mx-auto backdrop-blur-lg bg-white/90 rounded-lg sm:rounded-xl md:rounded-2xl shadow-xl overflow-hidden chat-container"
           ref={chatContainerRef}
           style={{ 
-            maxHeight: `${viewportHeight - 60}px` // Adjust for header
+            maxHeight: `${viewportHeight - 60}px`,
+            position: 'relative'
           }}
         >
           <ChatHeader 

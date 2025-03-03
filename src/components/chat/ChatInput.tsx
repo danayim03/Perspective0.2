@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
@@ -25,6 +25,27 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   inputRef,
   onFocus
 }) => {
+  // Prevent keyboard caused layout shifts
+  useEffect(() => {
+    const input = inputRef.current;
+    if (input) {
+      // Apply this only for iOS devices
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+      if (isIOS) {
+        // Capture the scroll position before focus
+        const handleFocusIn = () => {
+          // Let the parent component handle the focus logic
+          onFocus();
+        };
+        
+        input.addEventListener('focusin', handleFocusIn);
+        return () => {
+          input.removeEventListener('focusin', handleFocusIn);
+        };
+      }
+    }
+  }, [inputRef, onFocus]);
+
   return (
     <div className="p-2 sm:p-3 md:p-4 border-t sticky bottom-0 bg-white/95 backdrop-blur-sm chat-input-container z-10">
       <div className="flex gap-1 sm:gap-2">
