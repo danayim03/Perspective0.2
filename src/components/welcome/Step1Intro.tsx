@@ -72,8 +72,8 @@ export const Step1Intro = ({ nickname, setNickname, setStep }: Step1Props) => {
                 {displayedFirstLine}
               </p>
             </div>
-            {/* Curved arrow for first bubble */}
-            <div className="absolute left-6 bottom-0">
+            {/* Left-pointing arrow for first bubble */}
+            <div className="absolute left-6 bottom-0 transform translate-y-[100%]">
               <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 0C5 0 20 0 20 16C13.3333 10.6667 5 7 0 0Z" fill="#F1F1F1"/>
               </svg>
@@ -87,8 +87,8 @@ export const Step1Intro = ({ nickname, setNickname, setStep }: Step1Props) => {
                 {displayedSecondLine}
               </p>
             </div>
-            {/* Right-pointing arrow for the second message */}
-            <div className="absolute right-6 bottom-0">
+            {/* Right-pointing arrow for second bubble */}
+            <div className="absolute right-6 bottom-0 transform translate-y-[100%]">
               <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M20 0C15 0 0 0 0 16C6.66667 10.6667 15 7 20 0Z" fill="#F1F1F1"/>
               </svg>
