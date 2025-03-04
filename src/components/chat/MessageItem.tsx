@@ -19,7 +19,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
     if (message.senderId === "system") {
       return "bg-gray-200 text-gray-600";
     } else if (message.senderId === "user1") {
-      // Apply the current selected color to all user messages regardless of their original bubble color
+      // Apply the current selected color to all user messages
       return `${selectedBubbleColor.value} ${selectedBubbleColor.textColor}`;
     } else {
       return "bg-gray-200 text-black";
@@ -36,10 +36,25 @@ export const MessageItem: React.FC<MessageItemProps> = ({
             : "justify-start"
       } my-2`}
     >
-      <div
-        className={`max-w-[85%] px-3 py-2 sm:px-4 sm:py-3 rounded-lg text-xs sm:text-sm chat-message ${getBubbleStyles()}`}
-      >
-        {message.content}
+      <div className="relative">
+        <div
+          className={`max-w-[85%] px-3 py-2 sm:px-4 sm:py-3 rounded-lg text-xs sm:text-sm ${getBubbleStyles()}`}
+        >
+          {message.content}
+        </div>
+        
+        {/* Add the curved tail only for non-system messages */}
+        {message.senderId !== "system" && (
+          <div className={`absolute ${message.senderId === "user1" ? "right-2" : "left-2"} bottom-[-6px] w-3 h-3 overflow-hidden`}>
+            <div 
+              className={`absolute transform rotate-45 w-4 h-4 -top-2 ${
+                message.senderId === "user1" 
+                  ? `${selectedBubbleColor.value.replace('bg-', '')} -right-1` 
+                  : "bg-gray-200 -left-1"
+              }`}
+            ></div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,11 +43,17 @@ export const Step1Intro = ({ nickname, setNickname, setStep }: Step1Props) => {
     <div className="text-center space-y-14">
       <div>
         <div className="relative mx-auto max-w-xs md:max-w-sm mb-8">
-          <div className="bg-[#E5E5EA] p-4 rounded-2xl text-left relative shadow-sm">
-            <div className="absolute left-2 bottom-0 w-4 h-4 bg-[#E5E5EA] transform rotate-45 translate-y-2"></div>
-            <p className="text-gray-800 min-h-[1.5rem]">
-              {displayedFirstLine}
-            </p>
+          {/* Message bubble with new styling to match iMessage */}
+          <div className="relative">
+            <div className="bg-[#303030] text-white p-4 rounded-2xl text-left shadow-sm">
+              <p className="min-h-[1.5rem]">
+                {displayedFirstLine}
+              </p>
+            </div>
+            {/* Curved arrow positioned at bottom left */}
+            <div className="absolute left-4 bottom-[-8px] w-3 h-3 overflow-hidden">
+              <div className="absolute transform rotate-45 bg-[#303030] w-4 h-4 -left-1 -top-2"></div>
+            </div>
           </div>
         </div>
         <h1 className="text-4xl font-medium">Perspective 🍵</h1>
