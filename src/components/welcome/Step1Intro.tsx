@@ -43,16 +43,16 @@ export const Step1Intro = ({ nickname, setNickname, setStep }: Step1Props) => {
     <div className="text-center space-y-14">
       <div>
         <div className="relative mx-auto max-w-xs md:max-w-sm mb-8">
-          {/* Message bubble with new styling to match iMessage */}
+          {/* Message bubble with iMessage-style arrow but using Pool Day color */}
           <div className="relative">
-            <div className="bg-[#303030] text-white p-4 rounded-2xl text-left shadow-sm">
+            <div className="bg-[#92D1FF] text-black p-4 rounded-2xl text-left shadow-sm">
               <p className="min-h-[1.5rem]">
                 {displayedFirstLine}
               </p>
             </div>
             {/* Curved arrow positioned at bottom left */}
             <div className="absolute left-4 bottom-[-8px] w-3 h-3 overflow-hidden">
-              <div className="absolute transform rotate-45 bg-[#303030] w-4 h-4 -left-1 -top-2"></div>
+              <div className="absolute transform rotate-45 bg-[#92D1FF] w-4 h-4 -left-1 -top-2"></div>
             </div>
           </div>
         </div>
