@@ -67,7 +67,7 @@ export const Step1Intro = ({ nickname, setNickname, setStep }: Step1Props) => {
         <div className="relative mx-auto max-w-xs md:max-w-sm mb-8">
           {/* First message bubble with left arrow */}
           <div className="relative mb-4">
-            <div className="bg-[#F1F1F1] text-black p-4 rounded-2xl text-left shadow-sm">
+            <div className="bg-[#F1F1F1] text-black p-4 rounded-2xl text-left">
               <p className="min-h-[1.5rem]">
                 {displayedFirstLine}
               </p>
@@ -80,9 +80,9 @@ export const Step1Intro = ({ nickname, setNickname, setStep }: Step1Props) => {
             </div>
           </div>
           
-          {/* Second message bubble with right arrow */}
+          {/* Second message bubble with right arrow - sky blue with width fitting content */}
           <div className="relative">
-            <div className="bg-[#F1F1F1] text-black p-4 rounded-2xl text-left shadow-sm">
+            <div className="bg-[#33C3F0] text-black p-4 rounded-2xl text-left inline-block">
               <p className="min-h-[1.5rem]">
                 {displayedSecondLine}
               </p>
@@ -90,7 +90,7 @@ export const Step1Intro = ({ nickname, setNickname, setStep }: Step1Props) => {
             {/* Right-pointing arrow for the second message */}
             <div className="absolute right-6 bottom-[-12px]">
               <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 0C15 0 0 0 0 16C6.66667 10.6667 15 7 20 0Z" fill="#F1F1F1"/>
+                <path d="M20 0C15 0 0 0 0 16C6.66667 10.6667 15 7 20 0Z" fill="#33C3F0"/>
               </svg>
             </div>
           </div>
