@@ -1,3 +1,4 @@
+
 import { useState, KeyboardEvent, useEffect } from "react";
 import { Gender, Orientation, Role, User } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -72,7 +73,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const renderStep1 = () => (
     <div className="text-center space-y-14">
       <div>
-        <p className="text-gray-600 h-6 mb-4">
+        <p className="text-gray-600 h-6 mb-4 min-w-[16rem] mx-auto">
           {displayedFirstLine}
         </p>
         <h1 className="text-4xl font-medium">Perspective 🍵</h1>
