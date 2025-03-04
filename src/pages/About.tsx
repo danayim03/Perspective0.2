@@ -16,10 +16,7 @@ export default function About() {
         <div>
           <h3 className="text-2xl font-medium mb-4">Introduction: 📝</h3>
           <p className="ml-4">
-            Curious about your crush's perspective? Chat anonymously on Perspective with someone who
-            shares your crush's gender and sexuality! Whether you're seeking advice or just want to yap about
-            the situation 🤷‍♀️, this is your space. You can join as either a perspective giver or a getter. Who
-            doesn't love a little tea about someone else's relationship before bed? 🍵
+            Curious what someone of a different gender might think of your situation? Chat anonymously on Perspective with someone who can offer a fresh point of view! Whether you're seeking advice about relationships, social situations, or just want an alternative perspective 🤷‍♀️, this is your space. You can join as either a perspective giver or a getter. Who doesn't love hearing different viewpoints on life's interesting scenarios? 🍵
           </p>
         </div>
 
