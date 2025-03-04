@@ -36,10 +36,10 @@ export const MessageItem: React.FC<MessageItemProps> = ({
           : message.senderId === "user1" 
             ? "justify-end" 
             : "justify-start"
-      }`}
+      } my-2`}
     >
       <div
-        className={`max-w-[85%] p-1.5 sm:p-2 rounded-lg text-xs sm:text-sm chat-message ${getBubbleStyles()}`}
+        className={`max-w-[85%] px-3 py-2 sm:px-4 sm:py-3 rounded-lg text-xs sm:text-sm chat-message ${getBubbleStyles()}`}
       >
         {message.content}
       </div>
