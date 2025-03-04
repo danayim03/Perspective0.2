@@ -19,6 +19,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
     if (message.senderId === "system") {
       return "bg-gray-200 text-gray-600";
     } else if (message.senderId === "user1") {
+      // The issue was here - we need to properly concatenate the classes
       return message.bubbleColor 
         ? `${message.bubbleColor} ${selectedBubbleColor.textColor}`
         : `${selectedBubbleColor.value} ${selectedBubbleColor.textColor}`;
