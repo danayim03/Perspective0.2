@@ -1,4 +1,3 @@
-
 import { useState, useEffect, KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,7 +58,7 @@ export const Step1Intro = ({ nickname, setNickname, setStep }: Step1Props) => {
 
       <div className="space-y-3">
         <Input 
-          placeholder={nicknameInputFocused ? "" : "Enter a nickname to start chatting"}
+          placeholder={nicknameInputFocused ? "" : "Enter a nickname to chat"}
           className="max-w-md mx-auto rounded-full bg-perspective-100 border-0 py-6 px-8 text-center"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
