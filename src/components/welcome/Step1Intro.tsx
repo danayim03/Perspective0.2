@@ -42,9 +42,18 @@ export const Step1Intro = ({ nickname, setNickname, setStep }: Step1Props) => {
   return (
     <div className="text-center space-y-14">
       <div>
-        <p className="text-gray-600 h-6 mb-4 min-w-[16rem] md:min-w-[20rem] mx-auto text-left">
-          {displayedFirstLine}
-        </p>
+        <div className="relative mx-auto max-w-xs md:max-w-sm mb-8">
+          <div className="bg-perspective-100 p-3 rounded-lg text-left relative">
+            <div className="absolute left-0 top-1/2 transform -translate-x-2 -translate-y-1/2 w-0 h-0 
+              border-t-[8px] border-t-transparent 
+              border-r-[12px] border-r-perspective-100 
+              border-b-[8px] border-b-transparent">
+            </div>
+            <p className="text-gray-600 min-h-[1.5rem]">
+              {displayedFirstLine}
+            </p>
+          </div>
+        </div>
         <h1 className="text-4xl font-medium">Perspective 🍵</h1>
       </div>
 
