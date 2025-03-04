@@ -80,7 +80,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
 
       <div className="space-y-3">
         <Input 
-          placeholder={nicknameInputFocused ? "" : "Enter a nickname"}
+          placeholder={nicknameInputFocused ? "" : "Enter a nickname to start chatting"}
           className="max-w-md mx-auto rounded-full bg-perspective-100 border-0 py-6 px-8 text-center"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
