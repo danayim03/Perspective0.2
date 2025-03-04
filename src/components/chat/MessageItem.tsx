@@ -22,7 +22,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
       // Apply the current selected color to all user messages
       return `${selectedBubbleColor.value} ${selectedBubbleColor.textColor}`;
     } else {
-      return "bg-gray-200 text-black";
+      return "bg-[#F1F1F1] text-black";
     }
   };
 
@@ -45,14 +45,21 @@ export const MessageItem: React.FC<MessageItemProps> = ({
         
         {/* Add the curved tail only for non-system messages */}
         {message.senderId !== "system" && (
-          <div className={`absolute ${message.senderId === "user1" ? "right-2" : "left-2"} bottom-[-6px] w-3 h-3 overflow-hidden`}>
-            <div 
-              className={`absolute transform rotate-45 w-4 h-4 -top-2 ${
-                message.senderId === "user1" 
-                  ? `${selectedBubbleColor.value.replace('bg-', '')} -right-1` 
-                  : "bg-gray-200 -left-1"
-              }`}
-            ></div>
+          <div className={`absolute ${message.senderId === "user1" ? "right-2" : "left-2"} bottom-[-12px]`}>
+            {message.senderId === "user1" ? (
+              // Right-pointing arrow for user1 messages
+              <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path 
+                  d="M20 0C15 0 0 0 0 16C6.66667 10.6667 15 7 20 0Z" 
+                  fill={selectedBubbleColor.value.replace('bg-[', '').replace(']', '')} 
+                />
+              </svg>
+            ) : (
+              // Left-pointing arrow for other messages
+              <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0C5 0 20 0 20 16C13.3333 10.6667 5 7 0 0Z" fill="#F1F1F1"/>
+              </svg>
+            )}
           </div>
         )}
       </div>

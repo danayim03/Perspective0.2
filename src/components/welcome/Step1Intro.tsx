@@ -43,16 +43,18 @@ export const Step1Intro = ({ nickname, setNickname, setStep }: Step1Props) => {
     <div className="text-center space-y-14">
       <div>
         <div className="relative mx-auto max-w-xs md:max-w-sm mb-8">
-          {/* Message bubble with iMessage-style arrow but using Pool Day color */}
+          {/* Message bubble with iMessage-style arrow but using light gray color */}
           <div className="relative">
-            <div className="bg-[#92D1FF] text-black p-4 rounded-2xl text-left shadow-sm">
+            <div className="bg-[#F1F1F1] text-black p-4 rounded-2xl text-left shadow-sm">
               <p className="min-h-[1.5rem]">
                 {displayedFirstLine}
               </p>
             </div>
-            {/* Curved arrow positioned at bottom left */}
-            <div className="absolute left-4 bottom-[-8px] w-3 h-3 overflow-hidden">
-              <div className="absolute transform rotate-45 bg-[#92D1FF] w-4 h-4 -left-1 -top-2"></div>
+            {/* Improved curved arrow to match the reference image exactly */}
+            <div className="absolute left-6 bottom-[-12px]">
+              <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0C5 0 20 0 20 16C13.3333 10.6667 5 7 0 0Z" fill="#F1F1F1"/>
+              </svg>
             </div>
           </div>
         </div>
