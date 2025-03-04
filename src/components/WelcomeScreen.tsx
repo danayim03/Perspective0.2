@@ -1,3 +1,4 @@
+
 import { useState, KeyboardEvent, useEffect } from "react";
 import { Gender, Orientation, Role, User } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [nickname, setNickname] = useState("");
   const [nicknameInputFocused, setNicknameInputFocused] = useState(false);
   
-  const firstLine = "Start chatting anonymously with people of different perspectives...";
+  const firstLine = "See your situation from another...";
   const [displayedFirstLine, setDisplayedFirstLine] = useState("");
   const [typingComplete, setTypingComplete] = useState(false);
   
@@ -72,10 +73,10 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const renderStep1 = () => (
     <div className="text-center space-y-14">
       <div>
-        <h1 className="text-4xl font-medium mb-4">Perspective 🍵</h1>
-        <p className="text-gray-600 h-6">
+        <p className="text-gray-600 h-6 mb-4">
           {displayedFirstLine}
         </p>
+        <h1 className="text-4xl font-medium">Perspective 🍵</h1>
       </div>
 
       <div className="space-y-3">
