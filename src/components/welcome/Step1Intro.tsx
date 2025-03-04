@@ -43,11 +43,7 @@ export const Step1Intro = ({ nickname, setNickname, setStep }: Step1Props) => {
       <div>
         <div className="relative mx-auto max-w-xs md:max-w-sm mb-8">
           <div className="bg-[#E5E5EA] p-4 rounded-2xl text-left relative shadow-sm">
-            <div className="absolute left-0 bottom-[15px] transform -translate-x-[6px] w-4 h-4 
-              overflow-hidden before:content-[''] before:absolute before:w-2 before:h-2 
-              before:bg-[#E5E5EA] before:rounded-[50%] before:right-0 before:bottom-0 
-              before:shadow-[-2px -2px 0 0 #E5E5EA]">
-            </div>
+            <div className="absolute left-2 bottom-0 w-4 h-4 bg-[#E5E5EA] transform rotate-45 translate-y-2"></div>
             <p className="text-gray-800 min-h-[1.5rem]">
               {displayedFirstLine}
             </p>
