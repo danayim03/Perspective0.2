@@ -27,7 +27,7 @@ export const MessageList: React.FC<MessageListProps> = ({
   messagesEndRef
 }) => {
   return (
-    <div className="flex-1 p-5 sm:p-6 md:p-8 overflow-y-auto space-y-2 sm:space-y-3 md:space-y-4 scrollbar-hide" style={{ paddingBottom: '5rem' }}>
+    <div className="flex-1 p-5 sm:p-6 md:p-8 lg:p-10 xl:p-12 overflow-y-auto space-y-2 sm:space-y-3 md:space-y-4 scrollbar-hide" style={{ paddingBottom: '5rem' }}>
       {!isConnected && !chatEnded && !isRematching && (
         <div className="h-full flex items-center justify-center text-red-500 text-xs sm:text-sm md:text-base">
           Connection lost. Please try again.
