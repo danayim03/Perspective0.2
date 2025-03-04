@@ -1,4 +1,3 @@
-
 import { useState, KeyboardEvent, useEffect } from "react";
 import { Gender, Orientation, Role, User } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -26,7 +25,7 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [nickname, setNickname] = useState("");
   const [nicknameInputFocused, setNicknameInputFocused] = useState(false);
   
-  const firstLine = "See your situation from another...";
+  const firstLine = "Understand your situation from another...";
   const [displayedFirstLine, setDisplayedFirstLine] = useState("");
   const [typingComplete, setTypingComplete] = useState(false);
   
