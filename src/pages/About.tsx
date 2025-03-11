@@ -1,4 +1,3 @@
-
 import React from "react";
 
 const PerspectiveName = () => (
@@ -9,37 +8,39 @@ export default function About() {
   return (
     <div className="p-8 pt-24 max-w-4xl mx-auto font-mono">
       <h1 className="text-4xl font-medium mb-16">
-        New to <PerspectiveName />? ✨
+        First time on <PerspectiveName />? 👀
       </h1>
 
       <div className="space-y-12">
+        {/* Introduction */}
         <div>
-          <h3 className="text-2xl font-medium mb-4">Introduction: 📝</h3>
+          <h3 className="text-2xl font-medium mb-4">See the other side. 🔮</h3>
           <p className="ml-4">
-            Curious what someone of a different gender might think of your situation? Chat anonymously on Perspective with someone who can offer a fresh point of view! Whether you're seeking advice about relationships, social situations, or just want an alternative perspective 🤷‍♀️, this is your space. You can join as either a perspective giver or a getter. Who doesn't love hearing different viewpoints on life's interesting scenarios? 🍵
+            Ever wished what the opposite gender really thinks?<br />
+            Why do they do that? What do they actually mean?
+            <br /><br />
+            On <PerspectiveName />, you can anonymously get or give advice from another angle.<br />
+            No judgement. No background info. Just real talk.
           </p>
         </div>
 
+        {/* How it works */}
         <div>
-          <h3 className="text-2xl font-medium mb-4">Here's how it works: 🔍</h3>
+          <h3 className="text-2xl font-medium mb-4">How it works</h3>
           <ul className="ml-4 space-y-2">
-            <li>1. Choose to get a perspective (💡) or give a perspective (🍵👀).</li>
-            <li>
-              2. Match anonymously based on preferences like gender and sexuality, ensuring the advice feels
-              relevant and personal. 🤝
-            </li>
-            <li>
-              3. Start chatting, ask questions, and share insights—all in a safe space where your conversation
-              disappears after the session. 💬
-            </li>
+            <li>1. Choose your role: Are you here to ask for a perspective (💡) or give one (🍵)?</li>
+            <li>2. Get matched: Chat with someone of the opposite gender (or the same gender!).</li>
+            <li>3. Talk. Ask. Unravel the mystery: Your convo disappears after the session. 💬</li>
           </ul>
         </div>
 
+        {/* Who is it for? */}
         <div>
-          <h3 className="text-2xl font-medium mb-4">Who is it for?: 🌈</h3>
-          <p className="ml-4">
-            <PerspectiveName /> is for everyone. It's a welcoming space for people of all genders and sexualities to
-            give or receive advice, gain clarity, and understand relationships from new angles. 💕
+          <h3 className="text-2xl font-medium mb-4">Who is this for?</h3>
+          <p className="ml-4 mb-14">
+            <PerspectiveName /> is for anyone who needs to spill the tea without the drama.<br /><br />
+            You started dating your boss and don't know what to do? Don't know if your girlfriend actually likes to cuddle for hours? You're bored and just looking for some hot tea at 2am?<br />
+            Get the unfiltered take from a stranger, without having to worry about the consequences 🍵.
           </p>
         </div>
       </div>
