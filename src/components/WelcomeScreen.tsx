@@ -19,17 +19,15 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [nickname, setNickname] = useState("");
 
   const handleSubmit = () => {
-    if (!role || !gender || !orientation) return;
+    if (!role || !gender) return;
 
     const userData: Omit<User, "id"> = {
       role,
       gender,
-      orientation,
     };
 
-    if (role === "getter" && targetGender && targetOrientation) {
+    if (role === "getter" && targetGender) {
       userData.targetGender = targetGender;
-      userData.targetOrientation = targetOrientation;
     }
 
     onComplete(userData);

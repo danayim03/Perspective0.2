@@ -7,9 +7,9 @@ export interface User {
   id: string;
   role: Role;
   gender: Gender;
-  orientation: Orientation;
+  // orientation: Orientation;
   targetGender?: Gender; // The gender of the person they want perspective about
-  targetOrientation?: Orientation; // The orientation of the person they want perspective about
+  // targetOrientation?: Orientation; // The orientation of the person they want perspective about
   bubbleColor?: string; // User's preferred chat bubble color
 }
 

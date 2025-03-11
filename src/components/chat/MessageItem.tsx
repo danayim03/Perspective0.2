@@ -30,21 +30,26 @@ export const MessageItem: React.FC<MessageItemProps> = ({
     <div
       className={`flex ${
         message.senderId === "system" 
-          ? "justify-center"
-          : message.senderId === "user1" 
-            ? "justify-end" 
-            : "justify-start"
+        ? "justify-center w-full"
+        : message.senderId === "user1" 
+        ? "justify-end w-full" 
+        : "justify-start w-full"
       } my-2`}
     >
-      <div className="relative">
+    <div 
+      className={`relative max-w-[85%] ${
+        message.senderId === "system" 
+        ? "w-auto"
+        : "w-fit"
+    }`}>
         <div
-          className={`max-w-[85%] px-3 py-2 sm:px-4 sm:py-3 rounded-lg text-xs sm:text-sm ${getBubbleStyles()}`}
+          className={`inline-block px-3 py-2 sm:px-4 sm:py-3 rounded-lg text-xs sm:text-sm ${getBubbleStyles()}`}
         >
           {message.content}
         </div>
         
         {/* Add the curved tail only for non-system messages */}
-        {message.senderId !== "system" && (
+        {/* {message.senderId !== "system" && (
           <div className={`absolute ${message.senderId === "user1" ? "right-2" : "left-2"} bottom-[-12px]`}>
             {message.senderId === "user1" ? (
               // Right-pointing arrow for user1 messages
@@ -61,7 +66,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
               </svg>
             )}
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

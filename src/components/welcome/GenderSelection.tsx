@@ -21,7 +21,7 @@ export const GenderSelection = ({
   return (
     <div className="space-y-4 max-w-md mx-auto mt-8">
       <h3 className="text-lg font-medium">
-        {isTarget ? "Find me a gender:" : `${nickname}'s gender is:`}
+        {isTarget ? "I want to talk to a:" : `You are a:`}
       </h3>
       <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
         <Button 
@@ -32,7 +32,7 @@ export const GenderSelection = ({
             : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
           onKeyDown={(e) => handleKeyDown(e, () => setGender("male"))}
         >
-          Male
+          Guy
         </Button>
         
         <Button 
@@ -43,10 +43,10 @@ export const GenderSelection = ({
             : "bg-gray-100 text-gray-800 hover:bg-gray-200"} w-full sm:w-auto`}
           onKeyDown={(e) => handleKeyDown(e, () => setGender("female"))}
         >
-          Female
+          Girl
         </Button>
         
-        <Button 
+        {/* <Button 
           onClick={() => setGender("non-binary")}
           variant="outline"
           className={`rounded-full px-6 transition-colors ${(gender === "non-binary") 
@@ -55,7 +55,7 @@ export const GenderSelection = ({
           onKeyDown={(e) => handleKeyDown(e, () => setGender("non-binary"))}
         >
           Non-binary 
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

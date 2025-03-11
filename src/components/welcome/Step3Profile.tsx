@@ -44,8 +44,8 @@ export const Step3Profile = ({
     <div className="text-center space-y-6">
       <h1 className="text-2xl font-medium">
         {role === "getter" 
-          ? `Let me find a perspective for you...`
-          : `Tell us about yourself, ${nickname} 📝`
+          ? `Let me find a perspective for ${nickname} 📝...`
+          : `What perspective are you providing, ${nickname}?`
         }
       </h1>
       
@@ -55,13 +55,13 @@ export const Step3Profile = ({
         setGender={setGender}
         handleKeyDown={handleKeyDown}
       />
-      
+{/*       
       <OrientationSelection 
         nickname={nickname}
         orientation={orientation}
         setOrientation={setOrientation}
         handleKeyDown={handleKeyDown}
-      />
+      /> */}
       
       {role === "getter" && (
         <>
@@ -73,13 +73,13 @@ export const Step3Profile = ({
             handleKeyDown={handleKeyDown}
           />
           
-          <OrientationSelection 
+          {/* <OrientationSelection 
             nickname={nickname}
             orientation={targetOrientation}
             setOrientation={setTargetOrientation}
             isTarget={true}
             handleKeyDown={handleKeyDown}
-          />
+          /> */}
         </>
       )}
       
@@ -87,8 +87,8 @@ export const Step3Profile = ({
         <Button 
           onClick={handleSubmit} 
           disabled={
-            !gender || !orientation || 
-            (role === "getter" && (!targetGender || !targetOrientation))
+            !gender || 
+            (role === "getter" && (!targetGender))
           }
           className="rounded-full bg-perspective-400 hover:bg-perspective-500 text-gray-500 font-medium py-2 px-8"
           onKeyDown={(e) => handleKeyDown(e, () => handleSubmit())}

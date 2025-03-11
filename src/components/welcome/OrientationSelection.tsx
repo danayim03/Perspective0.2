@@ -46,7 +46,7 @@ export const OrientationSelection = ({
           Gay 
         </Button>
         
-        <Button 
+        {/* <Button 
           onClick={() => setOrientation("bisexual")}
           variant="outline"
           className={`rounded-full px-6 transition-colors ${orientation === "bisexual" 
@@ -55,7 +55,7 @@ export const OrientationSelection = ({
           onKeyDown={(e) => handleKeyDown(e, () => setOrientation("bisexual"))}
         >
           Bisexual 
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
