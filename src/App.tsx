@@ -12,24 +12,35 @@ import { Navigation } from "./components/Navigation";
 
 const queryClient = new QueryClient();
 
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
+}
+
 // Create a custom navigation controller
 const NavigationController = () => {
   const [navDisabled, setNavDisabled] = useState(false);
   const location = useLocation();
 
+  // Track page views in Google Analytics
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("config", "G-8LC18G9X4M", {
+        page_path: location.pathname + location.search,
+      });
+    }
+  }, [location.pathname]);
+
   // Listen for navigation state changes from a custom event
   useEffect(() => {
-    // Define event handler for enabling/disabling navigation
     const handleNavToggle = (event: CustomEvent) => {
       setNavDisabled(event.detail.disabled);
     };
 
-    // Add event listener
-    window.addEventListener('navToggle' as any, handleNavToggle);
-
-    // Clean up
+    window.addEventListener("navToggle" as any, handleNavToggle);
     return () => {
-      window.removeEventListener('navToggle' as any, handleNavToggle);
+      window.removeEventListener("navToggle" as any, handleNavToggle);
     };
   }, []);
 
@@ -44,6 +55,7 @@ const NavigationController = () => {
     </>
   );
 };
+
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
