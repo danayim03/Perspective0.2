@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { User } from "@/types";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
@@ -15,6 +16,7 @@ const Index = () => {
   const [state, setState] = useState<AppState>("welcome");
   const [user, setUser] = useState<User | null>(null);
   const [ws, setWs] = useState<WebSocket | null>(null);
+  const [welcomeStep, setWelcomeStep] = useState(1);
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,6 +34,7 @@ const Index = () => {
         setState("welcome");
         setUser(null);
         setWs(null);
+        setWelcomeStep(1);
       }
     };
 
@@ -48,6 +51,7 @@ const Index = () => {
       setState("welcome");
       setUser(null);
       setWs(null);
+      setWelcomeStep(1);
     };
 
     window.addEventListener('resetToWelcome', handleResetToWelcome);
@@ -92,6 +96,7 @@ const Index = () => {
           });
           setState("welcome");
           setUser(null);
+          setWelcomeStep(1);
         }
       };
 
@@ -119,11 +124,13 @@ const Index = () => {
     setState("welcome");
     setUser(null);
     setWs(null);
+    setWelcomeStep(1);
   };
 
   const handleMatchingGoBack = () => {
-    // Go back to welcome screen without closing the connection
+    // Go back to the gender selection step (step 2) without losing user info
     setState("welcome");
+    setWelcomeStep(2);
   };
 
   const handleRematch = () => {
@@ -152,7 +159,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen px-3 sm:px-4 md:px-6 pt-12 sm:pt-16 container">
-      {state === "welcome" && <WelcomeScreen onComplete={handleWelcomeComplete} />}
+      {state === "welcome" && (
+        <WelcomeScreen 
+          onComplete={handleWelcomeComplete} 
+          initialStep={welcomeStep}
+          userData={user}
+        />
+      )}
       {state === "matching" && user && (
         <MatchingScreen
           ws={ws}

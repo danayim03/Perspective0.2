@@ -3,16 +3,21 @@ import { useState, KeyboardEvent } from "react";
 import { Gender, User } from "@/types";
 import { Step1Intro } from "./welcome/Step1Intro";
 import { Step2Gender } from "./welcome/Step2Gender";
-import { Button } from "@/components/ui/button";
 
 interface WelcomeScreenProps {
   onComplete: (user: Omit<User, "id">) => void;
+  initialStep?: number;
+  userData?: User | null;
 }
 
-export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
-  const [gender, setGender] = useState<Gender | "">("");
-  const [targetGender, setTargetGender] = useState<Gender | "">("");
-  const [step, setStep] = useState(1);
+export const WelcomeScreen = ({ 
+  onComplete, 
+  initialStep = 1,
+  userData = null 
+}: WelcomeScreenProps) => {
+  const [gender, setGender] = useState<Gender | "">(userData?.gender || "");
+  const [targetGender, setTargetGender] = useState<Gender | "">(userData?.targetGender || "");
+  const [step, setStep] = useState(initialStep);
   const [nickname, setNickname] = useState("");
 
   // Handle form submission directly from the gender selection page
