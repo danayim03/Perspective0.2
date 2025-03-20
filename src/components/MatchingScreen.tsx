@@ -4,9 +4,10 @@ import { User } from "@/types";
 interface MatchingScreenProps {
   ws: WebSocket | null;
   user: User;
+  onGoBack: () => void;
 }
 
-export const MatchingScreen = ({ ws, user }: MatchingScreenProps) => {
+export const MatchingScreen = ({ ws, user, onGoBack }: MatchingScreenProps) => {
   const getMatchingMessage = () => {
     return `Give us a sec... Matching you with a ${user.targetGender === "male" ? "guy" : "girl"}... 🔍`;
   };
@@ -28,7 +29,7 @@ export const MatchingScreen = ({ ws, user }: MatchingScreenProps) => {
         
         <button 
           className="mt-6 sm:mt-8 text-sm sm:text-base text-gray-500 hover:text-gray-800 transition-colors"
-          onClick={() => window.location.reload()}
+          onClick={onGoBack}
         >
           ← Go Back
         </button>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { User } from "@/types";
 import { WelcomeScreen } from "@/components/WelcomeScreen";
@@ -122,6 +121,11 @@ const Index = () => {
     setWs(null);
   };
 
+  const handleMatchingGoBack = () => {
+    // Go back to welcome screen without closing the connection
+    setState("welcome");
+  };
+
   const handleRematch = () => {
     // Don't close the existing connection, just change state and send waiting signal
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -153,6 +157,7 @@ const Index = () => {
         <MatchingScreen
           ws={ws}
           user={user}
+          onGoBack={handleMatchingGoBack}
         />
       )}
       {state === "chat" && ws && (
