@@ -152,7 +152,6 @@ const Index = () => {
       {state === "matching" && user && (
         <MatchingScreen
           ws={ws}
-          role={user.role}
           user={user}
         />
       )}

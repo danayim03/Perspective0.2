@@ -1,34 +1,14 @@
 
-import { Role, User } from "@/types";
+import { User } from "@/types";
 
 interface MatchingScreenProps {
   ws: WebSocket | null;
-  role: Role;
   user: User;
 }
 
-export const MatchingScreen = ({ role, ws, user }: MatchingScreenProps) => {
-  // Helper function to format gender and orientation for display
-  const formatGenderOrientation = (gender: string, orientation: string): string => {
-    return `${orientation} ${gender}`;
-  };
-
-  // Dynamically generate messages based on user preferences
+export const MatchingScreen = ({ ws, user }: MatchingScreenProps) => {
   const getMatchingMessage = () => {
-    if (role === "getter" && user.targetGender && user.targetOrientation) {
-      return `Give us a sec... Matching you with a ${formatGenderOrientation(user.targetGender, user.targetOrientation)}... 🔍`;
-    } else if (role === "giver") {
-      return "Finding someone who needs your perspective... 🍵👀";
-    }
-    return "Finding someone for you... 🔍";
-  };
-
-  const getMatchingSubtitle = () => {
-    if (role === "getter") {
-      return "We're connecting you with someone who can help 💡";
-    } else {
-      return "We're connecting you with someone seeking advice 💭";
-    }
+    return `Give us a sec... Matching you with a ${user.targetGender === "male" ? "guy" : "girl"}... 🔍`;
   };
 
   return (
@@ -39,7 +19,7 @@ export const MatchingScreen = ({ role, ws, user }: MatchingScreenProps) => {
         </h2>
         
         <p className="text-gray-600 text-sm sm:text-base">
-          {getMatchingSubtitle()}
+          We're connecting you with someone with a different perspective 💡
         </p>
         
         <div className="flex justify-center">

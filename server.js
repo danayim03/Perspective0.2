@@ -33,67 +33,34 @@ wss.on('connection', (ws) => {
         
         console.log('User waiting or reconnected:', data.user);
         
-        // If this is a getter, try to find a matching giver
-        if (data.user.role === 'getter') {
-          console.log('Looking for a match for getter:', data.user);
+        // Try to find a match based on gender preferences
+        console.log('Looking for a match for user:', data.user);
+        
+        for (const [waitingUserId, userData] of waitingUsers.entries()) {
+          if (waitingUserId === userId || userData.lastMatchedUserId === userId) continue; // Skip self and last match
           
-          for (const [waitingUserId, userData] of waitingUsers.entries()) {
-            if (waitingUserId === userId || userData.lastMatchedUserId === userId) continue; // Skip self and last match
-            
-            const isMatch = 
-              userData.role === 'giver' &&
-              userData.gender === data.user.targetGender &&
-              userData.orientation === data.user.targetOrientation;
-            
-            if (isMatch) {
-              const matchedWs = userConnections.get(waitingUserId);
-              if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
-                console.log('Match found between:', data.user, 'and', userData);
-                
-                // Remove both users from waiting pool
-                waitingUsers.delete(userId);
-                waitingUsers.delete(waitingUserId);
-                
-                // Add to active matches
-                activeMatches.set(ws, matchedWs);
-                activeMatches.set(matchedWs, ws);
-                
-                // Notify both users
-                ws.send(JSON.stringify({ type: 'matched' }));
-                matchedWs.send(JSON.stringify({ type: 'matched' }));
-                break;
-              }
-            }
-          }
-        }
-        // If this is a giver, check if any getters are waiting
-        else if (data.user.role === 'giver') {
-          console.log('New giver joined/reconnected, checking for waiting getters');
+          // Match if the gender preferences align
+          const isMatch = 
+            userData.gender === data.user.targetGender && 
+            userData.targetGender === data.user.gender;
           
-          for (const [waitingUserId, userData] of waitingUsers.entries()) {
-            if (waitingUserId === userId || userData.lastMatchedUserId === userId) continue; // Skip self and last match
-            
-            if (userData.role === 'getter' &&
-                data.user.gender === userData.targetGender &&
-                data.user.orientation === userData.targetOrientation) {
+          if (isMatch) {
+            const matchedWs = userConnections.get(waitingUserId);
+            if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
+              console.log('Match found between:', data.user, 'and', userData);
               
-              const matchedWs = userConnections.get(waitingUserId);
-              if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
-                console.log('Match found between giver:', data.user, 'and getter:', userData);
-                
-                // Remove both users from waiting pool
-                waitingUsers.delete(userId);
-                waitingUsers.delete(waitingUserId);
-                
-                // Add to active matches
-                activeMatches.set(ws, matchedWs);
-                activeMatches.set(matchedWs, ws);
-                
-                // Notify both users
-                ws.send(JSON.stringify({ type: 'matched' }));
-                matchedWs.send(JSON.stringify({ type: 'matched' }));
-                break;
-              }
+              // Remove both users from waiting pool
+              waitingUsers.delete(userId);
+              waitingUsers.delete(waitingUserId);
+              
+              // Add to active matches
+              activeMatches.set(ws, matchedWs);
+              activeMatches.set(matchedWs, ws);
+              
+              // Notify both users
+              ws.send(JSON.stringify({ type: 'matched' }));
+              matchedWs.send(JSON.stringify({ type: 'matched' }));
+              break;
             }
           }
         }
@@ -130,7 +97,7 @@ wss.on('connection', (ws) => {
 
         if (matchedWs && matchedWs.readyState === WebSocket.OPEN) {
           matchedWs.send(JSON.stringify({ type: 'rematchNotification', message: "Your opponent has clicked rematch :(" }));
-          console.log(`User ${data.user.id} requested a rematch, sending ${matchedWs} back to waiting.`);
+          console.log(`User ${data.user.id} requested a rematch, sending notification.`);
         }
 
         // Remove both users from active matches

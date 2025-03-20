@@ -1,34 +1,28 @@
 
 import { useState, KeyboardEvent } from "react";
-import { Gender, Orientation, Role, User } from "@/types";
+import { Gender, User } from "@/types";
 import { Step1Intro } from "./welcome/Step1Intro";
-import { Step2Role } from "./welcome/Step2Role";
-import { Step3Profile } from "./welcome/Step3Profile";
+import { Step2Gender } from "./welcome/Step2Gender";
 
 interface WelcomeScreenProps {
   onComplete: (user: Omit<User, "id">) => void;
 }
 
 export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
-  const [role, setRole] = useState<Role | "">("");
   const [gender, setGender] = useState<Gender | "">("");
-  const [orientation, setOrientation] = useState<Orientation | "">("");
   const [targetGender, setTargetGender] = useState<Gender | "">("");
-  const [targetOrientation, setTargetOrientation] = useState<Orientation | "">("");
   const [step, setStep] = useState(1);
   const [nickname, setNickname] = useState("");
 
   const handleSubmit = () => {
-    if (!role || !gender) return;
+    if (!gender || !targetGender) return;
 
     const userData: Omit<User, "id"> = {
-      role,
       gender,
+      targetGender,
+      // Default role to getter to maintain compatibility with existing code
+      role: "getter" 
     };
-
-    if (role === "getter" && targetGender) {
-      userData.targetGender = targetGender;
-    }
 
     onComplete(userData);
   };
@@ -45,28 +39,38 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
         )}
         
         {step === 2 && (
-          <Step2Role 
+          <Step2Gender
             nickname={nickname}
-            setRole={setRole}
+            gender={gender}
+            setGender={setGender}
+            targetGender={targetGender}
+            setTargetGender={setTargetGender}
             setStep={setStep}
           />
         )}
         
         {step === 3 && (
-          <Step3Profile 
-            nickname={nickname}
-            role={role as Role}
-            gender={gender}
-            setGender={setGender}
-            orientation={orientation}
-            setOrientation={setOrientation}
-            targetGender={targetGender}
-            setTargetGender={setTargetGender}
-            targetOrientation={targetOrientation}
-            setTargetOrientation={setTargetOrientation}
-            handleSubmit={handleSubmit}
-            setStep={setStep}
-          />
+          <div className="text-center space-y-8">
+            <h1 className="text-3xl font-medium">You're all set, {nickname}!</h1>
+            <p className="text-lg">Ready to get matched with a {targetGender === "male" ? "guy" : "girl"}?</p>
+            
+            <div>
+              <Button 
+                onClick={handleSubmit} 
+                className="rounded-full bg-perspective-400 hover:bg-perspective-500 text-gray-500 font-medium py-2 px-8 mt-6"
+              >
+                Start Chatting
+              </Button>
+            </div>
+            
+            <Button 
+              onClick={() => setStep(2)} 
+              variant="ghost" 
+              className="text-gray-500 hover:text-gray-800"
+            >
+              ← Go Back
+            </Button>
+          </div>
         )}
       </div>
     </div>
