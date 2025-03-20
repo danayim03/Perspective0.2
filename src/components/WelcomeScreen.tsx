@@ -3,6 +3,7 @@ import { useState, KeyboardEvent } from "react";
 import { Gender, User } from "@/types";
 import { Step1Intro } from "./welcome/Step1Intro";
 import { Step2Gender } from "./welcome/Step2Gender";
+import { Button } from "@/components/ui/button";
 
 interface WelcomeScreenProps {
   onComplete: (user: Omit<User, "id">) => void;
