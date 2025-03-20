@@ -11,6 +11,7 @@ interface Step2Props {
   targetGender: Gender | "";
   setTargetGender: (gender: Gender) => void;
   setStep: (step: number) => void;
+  onSubmit: () => void;
 }
 
 export const Step2Gender = ({ 
@@ -19,7 +20,8 @@ export const Step2Gender = ({
   setGender,
   targetGender,
   setTargetGender,
-  setStep 
+  setStep,
+  onSubmit
 }: Step2Props) => {
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement | HTMLButtonElement>, action: () => void) => {
     if (e.key === 'Enter') {
@@ -67,12 +69,12 @@ export const Step2Gender = ({
       
       <div>
         <Button 
-          onClick={() => handleSubmit()} 
+          onClick={onSubmit} 
           disabled={!gender || !targetGender}
           className="rounded-full bg-perspective-400 hover:bg-perspective-500 text-gray-500 font-medium py-2 px-8 mt-6"
-          onKeyDown={(e) => handleKeyDown(e, () => handleSubmit())}
+          onKeyDown={(e) => handleKeyDown(e, () => onSubmit())}
         >
-          Proceed
+          Start Chatting
         </Button>
       </div>
       
@@ -86,9 +88,4 @@ export const Step2Gender = ({
       </Button>
     </div>
   );
-
-  function handleSubmit() {
-    if (!gender || !targetGender) return;
-    setStep(3);
-  }
 };

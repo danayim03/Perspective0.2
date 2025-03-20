@@ -15,7 +15,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
   const [step, setStep] = useState(1);
   const [nickname, setNickname] = useState("");
 
-  const handleSubmit = () => {
+  // Handle form submission directly from the gender selection page
+  const handleGenderSubmit = () => {
     if (!gender || !targetGender) return;
 
     const userData: Omit<User, "id"> = {
@@ -47,31 +48,8 @@ export const WelcomeScreen = ({ onComplete }: WelcomeScreenProps) => {
             targetGender={targetGender}
             setTargetGender={setTargetGender}
             setStep={setStep}
+            onSubmit={handleGenderSubmit}
           />
-        )}
-        
-        {step === 3 && (
-          <div className="text-center space-y-8">
-            <h1 className="text-3xl font-medium">You're all set, {nickname}!</h1>
-            <p className="text-lg">Ready to get matched with a {targetGender === "male" ? "guy" : "girl"}?</p>
-            
-            <div>
-              <Button 
-                onClick={handleSubmit} 
-                className="rounded-full bg-perspective-400 hover:bg-perspective-500 text-gray-500 font-medium py-2 px-8 mt-6"
-              >
-                Start Chatting
-              </Button>
-            </div>
-            
-            <Button 
-              onClick={() => setStep(2)} 
-              variant="ghost" 
-              className="text-gray-500 hover:text-gray-800"
-            >
-              ← Go Back
-            </Button>
-          </div>
         )}
       </div>
     </div>
