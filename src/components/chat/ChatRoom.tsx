@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Role } from "@/types";
 import { Card } from "@/components/ui/card";
 import { bubbleColorOptions } from "./constants";
 import { MessageList } from "./MessageList";
@@ -10,13 +9,12 @@ import { useChatConnection } from "@/hooks/useChatConnection";
 import { useChatView } from "@/hooks/useChatView";
 
 interface ChatRoomProps {
-  userRole: Role;
   onGoBack: () => void;
   onRematch: () => void;
   ws: WebSocket | null;
 }
 
-export const ChatRoom = ({ userRole, onGoBack, onRematch, ws }: ChatRoomProps) => {
+export const ChatRoom = ({ onGoBack, onRematch, ws }: ChatRoomProps) => {
   const [newMessage, setNewMessage] = useState("");
   
   const { 

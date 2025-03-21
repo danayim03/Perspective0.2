@@ -175,7 +175,6 @@ const Index = () => {
       )}
       {state === "chat" && ws && (
         <ChatRoom
-          userRole={user?.role || "getter"}
           onGoBack={handleGoBack}
           onRematch={handleRematch}
           ws={ws}

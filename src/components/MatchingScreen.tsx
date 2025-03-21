@@ -26,13 +26,6 @@ export const MatchingScreen = ({ ws, user, onGoBack }: MatchingScreenProps) => {
         <div className="flex justify-center">
           <div className="w-16 sm:w-24 h-1 bg-perspective-300 rounded-full animate-pulse-soft" />
         </div>
-        
-        <button 
-          className="mt-6 sm:mt-8 text-sm sm:text-base text-gray-500 hover:text-gray-800 transition-colors"
-          onClick={onGoBack}
-        >
-          ← Go Back
-        </button>
       </div>
     </div>
   );
