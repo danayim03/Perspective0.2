@@ -14,34 +14,21 @@ export default function About() {
       <div className="space-y-12">
         {/* Introduction */}
         <div>
-          <h3 className="text-2xl font-medium mb-4">See the other side. 🔮</h3>
+          <h3 className="text-2xl font-medium mb-4">Get honest answers from the other side 👩 👨</h3>
           <p className="ml-4">
-            Ever wished what the opposite gender really thinks?<br />
-            Why do they do that? What do they actually mean?
-            <br /><br />
-            On <PerspectiveName />, you can anonymously get or give advice from another angle.<br />
-            No judgement. No background info. Just real talk.
+            Ever had a question about the opposite gender but didn’t know how to ask?<br /><br />
+            Maybe you’ve wondered what they really think, or why they act a certain way — but it feels too personal or awkward to bring up with your friends.<br /><br />
+            That’s where <PerspectiveName /> comes in. Ask anonymously. Answer honestly. No pressure, no judgment.<br /><br />
+            Once the chat ends, the messages disappear. No history, no trace — just a safe space to get a fresh perspective. 💬
           </p>
         </div>
-
         {/* How it works */}
         <div>
           <h3 className="text-2xl font-medium mb-4">How it works</h3>
-          <ul className="ml-4 space-y-2">
-            <li>1. Choose your role: Are you here to ask for a perspective (💡) or give one (🍵)?</li>
-            <li>2. Get matched: Chat with someone of the opposite gender (or the same gender!).</li>
-            <li>3. Talk. Ask. Unravel the mystery: Your convo disappears after the session. 💬</li>
+          <ul className="ml-4 space-y-4 mb-4">
+            <li>1. Get matched: Start a convo with someone from the other side (or your side — totally up to you).</li>
+            <li>2. Ask what you've always wanted to 🍵</li>
           </ul>
-        </div>
-
-        {/* Who is it for? */}
-        <div>
-          <h3 className="text-2xl font-medium mb-4">Who is this for?</h3>
-          <p className="ml-4 mb-14">
-            <PerspectiveName /> is for anyone who needs to spill the tea without the drama.<br /><br />
-            You started dating your boss and don't know what to do? Don't know if your girlfriend actually likes to cuddle for hours? You're bored and just looking for some hot tea at 2am?<br />
-            Get the unfiltered take from a stranger, without having to worry about the consequences 🍵.
-          </p>
         </div>
       </div>
     </div>
