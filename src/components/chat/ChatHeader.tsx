@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Palette } from "lucide-react";
@@ -22,12 +21,13 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   onColorChange
 }) => {
   return (
-    <div className="p-2 sm:p-3 md:p-4 border-b flex items-center justify-between">
+    <div className="pt-2">
+    <div className="p-2 sm:p-3 md:p-4 border-b flex items-center justify-between ">
       <Button
         onClick={onEndChat}
         variant="ghost"
         size="sm"
-        className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-3"
+        className="text-perspective-600 hover:text-perspective-700 hover:bg-perspective-100 text-sm sm:text-xs md:text-base py-1 px-2 sm:py-2 sm:px-3"
       >
         End Chat
       </Button>
@@ -59,6 +59,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+    </div>
     </div>
   );
 };
