@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://perspective-sable-psi.vercel.app/sitemap.xml
