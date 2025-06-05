@@ -86,7 +86,7 @@ const Index = () => {
       websocket.onclose = () => {
         console.log("WebSocket Disconnected");
         setWs(null);
-        if (state !== "welcome") {
+        if (state === "matching") { // Fixed: compare with "matching" instead of "welcome"
           toast({
             title: "Connection lost",
             description: "Please try again",
