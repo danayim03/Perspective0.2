@@ -61,20 +61,18 @@ const Index = () => {
     };
   }, [ws]);
 
+  // Establish WebSocket connection when user enters matching state
   useEffect(() => {
-    // Only establish connection when user enters the app
-    if (user && !ws) {
+    if (user && state === "matching" && !ws) {
+      console.log("Establishing WebSocket connection for matching");
       const websocket = new WebSocket(WS_URL);
       
       websocket.onopen = () => {
         console.log("WebSocket Connected");
-        // If user is in matching state, send waiting signal
-        if (state === "matching") {
-          websocket.send(JSON.stringify({
-            type: 'waiting',
-            user: user
-          }));
-        }
+        websocket.send(JSON.stringify({
+          type: 'waiting',
+          user: user
+        }));
       };
 
       websocket.onmessage = (event) => {
@@ -100,17 +98,23 @@ const Index = () => {
         }
       };
 
+      websocket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+
       setWs(websocket);
     }
+  }, [user, state]); // Keep dependencies but fix the logic
 
-    // Cleanup function
+  // Cleanup WebSocket on component unmount
+  useEffect(() => {
     return () => {
       if (ws) {
+        console.log("Cleaning up WebSocket connection");
         ws.close();
-        setWs(null);
       }
     };
-  }, [user, state]);
+  }, []); // Empty dependency array for cleanup only on unmount
 
   const handleWelcomeComplete = (userData: Omit<User, "id">) => {
     setUser({ ...userData, id: Date.now().toString() });
@@ -128,7 +132,11 @@ const Index = () => {
   };
 
   const handleMatchingGoBack = () => {
-    // Go back to the gender selection step (step 2) without losing user info
+    // Close WebSocket and go back to gender selection step
+    if (ws) {
+      ws.close();
+      setWs(null);
+    }
     setState("welcome");
     setWelcomeStep(2);
   };
@@ -155,7 +163,8 @@ const Index = () => {
   useEffect(() => {
     console.log("Current app state:", state);
     console.log("User:", user);
-  }, [state, user]);
+    console.log("WebSocket state:", ws?.readyState);
+  }, [state, user, ws]);
 
   return (
     <div className="min-h-screen px-3 sm:px-4 md:px-6 pt-12 sm:pt-16 container">
